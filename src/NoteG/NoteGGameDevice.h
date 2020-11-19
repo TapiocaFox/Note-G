@@ -17,11 +17,32 @@ class NoteGGameDevice: public EventDevice {
       return abandon_this_loop;
     };
 
+    void importSheetMusic(int bytes_length, byte *bytes);
+    // Stop game, import then start game.
+
+    void pushNotification(String title, String message); // loading..., uploading...
+    // Do not interupt game.
+
+    bool showComfirmDialog(String title, String question); // yes no. E.g. import new sheet music?
+    // Pause game then resume.
+
+    bool showAlertDialog(String title, String question); // ok. E.g. Please import music sheet to start game. E.g. Your score is 12000.
+    // Pause game then resume.
+
     void startGame();
 
     void stopGame();
 
-    void importSheetMusic(int bytes_length, byte *bytes);
+    void pauseGame();
+
+    void resumeGame();
+
+  private:
+    int state = 0;
+    // 0 No sheet music data. In menu. Show import alert.
+    // 1 Has sheet music data. In menu. Two conditions: 1. Game initially hasn't started yet 2. After game finished. Game became non-started(also showing your score alert dialog).
+    // 2 Has sheet music data. Playing.
+    // 3 Has sheet music data. Paused.
 };
 
 #endif
