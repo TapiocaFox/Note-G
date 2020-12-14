@@ -135,7 +135,9 @@ NoteUnitRow.prototype.initialize = function(animation_container_dom_object, daf)
     this.toneNote(this._time_unit);
   });
   th_5.appendChild(button_5_0);
+  th_5.appendChild(document.createTextNode(' '));
   th_5.appendChild(button_5_1);
+  th_5.appendChild(document.createTextNode(' '));
   th_5.appendChild(button_5_2);
 
   this._dom_object.appendChild(th_0);

@@ -13,28 +13,48 @@ body {
   flex-direction: column;
 }
 #action-section {
-  padding: 10px;
-  min-height: 300px;
-  border-bottom: 1px solid black;
+  padding: 10px 20px;
+  min-height: 200px;
+  border-top: 1px solid black;
 }
 #editor-section {
-  padding: 10px;
+  padding: 10px 30px;
   flex: 1;
   overflow: auto;
+  background-color: #f0f0f0;
 }
 #game-animation {
+  display: inline-block;
+  margin-left: 20px;
+  float: right;
   width: 200px;
   height: 250px;
   position: relative;
   background: black;
 }
+#actions {
+  float: left;
+
+  display: inline-block;
+}
 #sheet-table {
   border-collapse: collapse;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
 }
 td, th {
   border: 1px solid #dddddd;
   text-align: left;
   padding: 8px;
+}
+input, button, select {
+  border-style: solid;
+  border-width:1px;
+  border-radius: 4px;
+  min-height: 15px;
+  font-size: 15px;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2)
 }
 tr:nth-child(even) {
   background-color: #f0f0f0;
@@ -42,22 +62,8 @@ tr:nth-child(even) {
 </style>
 <body>
   <div id="sections-container">
-    <div id="action-section">
-      <div id="game-animation"></div>
-      <p>
-        <button id="play-button">Play</button>
-        <button id="play-slower-button">Play slower</button>
-        <button id="stop-button">Stop</button>
-      </p>
-      <p>
-        <button id="upload-button">Upload</button>
-        <button id="export-button">Export</button>
-        <button id="import-button">Import</button>
-        <button id="clear-button">Clear</button>
-        <input style="display:none" type="file" id="import-file"/>
-      </p>
-    </div>
     <div id="editor-section">
+      <h1>Note-G editor</h1>
       <p>Title <input type="text" id="title" name="title" value="Untitled"></p>
       <p>Time unit <input type="number" id="time-unit" name="time-unit" min="1" max="256" value="25"> millisecond</p>
       <p>Timing window radius <input type="number" id="timing-window" name="timing-window" min="1" max="256" value="25"> millisecond</p>
@@ -78,6 +84,25 @@ tr:nth-child(even) {
           <th>Play next k notes</th>
         </tr> -->
       </table>
+    </div>
+    <div id="action-section">
+
+      <div id="actions">
+        <h1>Actions & Player</h1>
+        <p>
+          <button id="play-button">Play</button>
+          <button id="play-slower-button">Play slower</button>
+          <button id="stop-button">Stop</button>
+        </p>
+        <p>
+          <button id="upload-button">Upload</button>
+          <button id="export-button">Export</button>
+          <button id="import-button">Import</button>
+          <button id="clear-button">Clear</button>
+          <input style="display:none" type="file" id="import-file"/>
+        </p>
+      </div>
+      <div id="game-animation"></div>
     </div>
   </div>
   <script src="./SimpleDOMAnimationFramework.js"></script>
