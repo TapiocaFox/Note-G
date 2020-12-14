@@ -233,7 +233,7 @@ function start() {
   let time_unit = 25;
   const audio_context = new(window.AudioContext || window.webkitAudioContext)();
   let note_unit_list = [{
-    note_code_int: 0,
+    note_code_int: 37,
     tone_duration_millis: 8,
     rest_duration_millis: 1,
     button_instruction_list: [true, false, false, false],
