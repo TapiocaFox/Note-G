@@ -193,7 +193,7 @@ NoteUnitRow.prototype.updateGraphic = function(frames_per_second) {
 NoteUnitRow.prototype.toneNote = function(time_unit, callback) {
   this._dom_object.scrollIntoView(true);
   const oscillator = this._audio_context.createOscillator();
-  oscillator.type = 'square';
+  oscillator.type = 'triangle';
   oscillator.frequency.value = Notes[this._note_code_int][0];
   oscillator.connect(this._audio_context.destination);
   this._dom_object.animate([
@@ -264,13 +264,16 @@ function start() {
     time_unit = parseInt(event.target.value);
   });
 
+
+  let stop = false;
   // Play button
   const play_button = document.getElementById("play-button");
   play_button.addEventListener('click', () => {
+    stop = false;
     const note_unit_row_list = sheet_table.rows;
     let index = 1;
     const next = () => {
-      if(index < note_unit_row_list.length) {
+      if(index < note_unit_row_list.length&&!stop) {
         note_unit_row_list[index].NoteUnitRow.toneNote(time_unit, () => {
           index++;
           next();
@@ -278,6 +281,12 @@ function start() {
       }
     };
     next();
+  });
+
+  // Stop
+  const stop_button = document.getElementById("stop-button");
+  stop_button.addEventListener('click', () => {
+    stop = true;
   });
 
   // Play button
@@ -297,8 +306,8 @@ function start() {
         const doc = domparser.parseFromString(text, 'text/xml');
         const divisions = doc.getElementsByTagName("divisions")[0].innerHTML;
         const sound = doc.getElementsByTagName("sound")[0];
-        const tempo = sound?(sound.getAttribute('tempo')?sound.getAttribute('tempo'):120):120;
-        const quarter_note = 60.0/tempo/divisions*1000.0;
+        const tempo = sound?(sound.getAttribute('tempo')?sound.getAttribute('tempo'):108):108;
+        const quarter_note = 1000.0*60.0/tempo/divisions;
 
         const new_time_unit = quarter_note/2;
 
