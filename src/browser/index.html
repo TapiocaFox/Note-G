@@ -64,9 +64,14 @@ tr:nth-child(even) {
   <div id="sections-container">
     <div id="editor-section">
       <h1>Note-G editor</h1>
-      <p>Title <input type="text" id="title" name="title" value="Untitled"></p>
-      <p>Time unit <input type="number" id="time-unit" name="time-unit" min="1" max="256" value="25"> millisecond</p>
-      <p>Timing window radius <input type="number" id="timing-window" name="timing-window" min="1" max="256" value="25"> millisecond</p>
+      <p>Edit your sheet here. You can edit per note unit.</p>
+      <h3>Title</h3>
+      <input type="text" id="title" name="title" value="Untitled">
+      <h3>Time unit</h3>
+      <p><input type="number" id="time-unit" name="time-unit" min="1" max="256" value="25"> milliseconds.</p>
+      <h3>Timing window radius</h3>
+      <p> <input type="number" id="timing-window" name="timing-window" min="1" max="256" value="25"> milliseconds.</p>
+      <h3>Note unit sheet</h3>
       <table id="sheet-table">
         <tr>
           <th>Note</th>
@@ -89,6 +94,7 @@ tr:nth-child(even) {
 
       <div id="actions">
         <h1>Actions & Player</h1>
+        <p>Your global actions are here.</p>
         <p>
           <button id="play-button">Play</button>
           <button id="play-slower-button">Play slower</button>
@@ -101,6 +107,7 @@ tr:nth-child(even) {
           <button id="clear-button">Clear</button>
           <input style="display:none" type="file" id="import-file"/>
         </p>
+        <!-- <p>copyright©2020 noowyee.</p> -->
       </div>
       <div id="game-animation"></div>
     </div>

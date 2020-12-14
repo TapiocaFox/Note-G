@@ -272,8 +272,13 @@ function start() {
   sheet_table_daf.startAnimationAndLogicalTicking();
 
   const time_unit_text = document.getElementById("time-unit");
+  const title_text = document.getElementById("title");
   time_unit_text.addEventListener('change', (event) => {
     time_unit = parseInt(event.target.value);
+  });
+
+  title_text.addEventListener('change', (event) => {
+    // time_unit = parseInt(event.target.value);
   });
 
 
@@ -352,9 +357,13 @@ function start() {
 
   import_file.addEventListener('change', (event) => {
     const file = event.target.files[0];
-    const file_extension = import_file.value.split(/(\\|\/|\.)/g).pop();
+    const splited = import_file.value.split(/(\\|\/|\.)/g);
+    const file_extension = splited.pop();
     const reader = new FileReader();
     if(file_extension === 'xml') {
+
+      const file_name = splited[splited.length-2];
+      title_text.value = file_name;
       reader.onload = (event) => {
 
         const new_note_unit_list = [];
