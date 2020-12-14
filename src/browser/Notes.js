@@ -112,3 +112,20 @@ const Notes = [
   [7459, "A#8/Bb8"],
   [7902, "B8"],
 ];
+
+const Steps = {
+  C: 1,
+  D: 3,
+  E: 5,
+  F: 6,
+  G: 8,
+  A: 10,
+  B: 12
+};
+
+const TypeToQuarters = {
+  whole: 4,
+  half: 2,
+  quarter: 1,
+  eighth: 0.5,
+};

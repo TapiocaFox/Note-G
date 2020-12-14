@@ -47,8 +47,8 @@ NoteUnitRow.prototype.initialize = function(animation_container_dom_object, daf)
   const th_2 = document.createElement("th");
   const input_2 = document.createElement("input");
   input_2.setAttribute("type", "number");
-  input_2.setAttribute("min", 1);
-  input_2.setAttribute("max", 256);
+  input_2.setAttribute("min", 0);
+  input_2.setAttribute("max", 255);
   input_2.setAttribute("value", this._rest_duration_millis);
   input_2.addEventListener('change', (event) => {
     this._rest_duration_millis = event.target.value;
@@ -278,7 +278,104 @@ function start() {
       }
     };
     next();
-    console.log();
+  });
+
+  // Play button
+  const import_button = document.getElementById("import-button");
+  const import_file = document.getElementById("import-file");
+
+  import_file.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    const file_extension = import_file.value.split(/(\\|\/|\.)/g).pop();
+    const reader = new FileReader();
+    if(file_extension === 'xml') {
+      reader.onload = (event) => {
+
+        const new_note_unit_list = [];
+        const text = event.target.result;
+        const domparser = new DOMParser();
+        const doc = domparser.parseFromString(text, 'text/xml');
+        const divisions = doc.getElementsByTagName("divisions")[0].innerHTML;
+        const sound = doc.getElementsByTagName("sound")[0];
+        const tempo = sound?(sound.getAttribute('tempo')?sound.getAttribute('tempo'):120):120;
+        const quarter_note = 60.0/tempo/divisions*1000.0;
+
+        const new_time_unit = quarter_note/2;
+
+        console.log('MusicXML imported');
+        console.log('divisions: ', divisions);
+        console.log('tempo: ', tempo);
+        console.log('quarter_note: ', quarter_note);
+        const measures = doc.getElementsByTagName("measure");
+        let latest_default_x = 0;
+        for(let index = 0; index < measures.length; index++) {
+          const nodes = measures[index].childNodes;
+          if(index === 0) {
+            if(measures[index].getElementsByTagName("clef").length > 1) {
+              alert('This sheet has more then 1 clef. This may cause some errors. Click ok to continue.');
+            }
+          }
+
+          for(let j = 0; j < nodes.length; j++) {
+            const item = nodes[j];
+            if(item.tagName === 'note' || item.tagName === 'rest' ) {
+              if(latest_default_x === item.getAttribute('default-x')) {
+                continue;
+              }
+              latest_default_x = item.getAttribute('default-x');
+              const step = item.getElementsByTagName('step')[0]?Steps[item.getElementsByTagName('step')[0].innerHTML]:0;
+              const alter = item.getElementsByTagName('alter')[0]?parseInt(item.getElementsByTagName('alter')[0].innerHTML):0;
+              const octave = item.getElementsByTagName('octave')[0]?parseInt(item.getElementsByTagName('octave')[0].innerHTML):0;
+              const duration = item.getElementsByTagName('duration')[0]?parseInt(item.getElementsByTagName('duration')[0].innerHTML):0;
+              const quarters = item.getElementsByTagName('type')[0]?TypeToQuarters[item.getElementsByTagName('type')[0].innerHTML]:4;
+              // console.log('index: ', new_note_unit_list.length);
+              // console.log('Note imported');
+              // console.log('step: ', step);
+              // console.log('alter: ', alter);
+              // console.log('octave: ', octave);
+              // console.log('duration: ', duration);
+              // console.log('quarters: ', quarters);
+              new_note_unit_list.push({
+                note_code_int: (item.getElementsByTagName('rest').length)?0:12*octave+step+alter,
+                tone_duration_millis: duration,
+                rest_duration_millis: 1,
+                button_instruction_list: [false, false, false, false],
+                play_k_notes_int: 1,
+                time_unit: new_time_unit,
+                audio_context: audio_context
+              });
+            }
+            else if(item.tagName === 'backup') {
+              break;
+            }
+            else {
+
+            }
+          }
+        }
+        time_unit = new_time_unit;
+        time_unit_text.value = time_unit;
+        console.log(new_note_unit_list);
+        new_note_unit_list.forEach((settings, i) => {
+          sheet_table_daf.createGraphicalObject(new NoteUnitRow(settings));
+        });
+      };
+      reader.readAsText(file);
+    }
+    else if(file_extension === 'nsg') {
+      reader.onload = (event) => {
+        const ab = event.target.result;
+        console.log(ab);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+    else {
+      alert('File must be either ".nsg" or ".xml" file.');
+    }
+  });
+
+  import_button.addEventListener('click', () => {
+    import_file.click();
   });
 }
 
