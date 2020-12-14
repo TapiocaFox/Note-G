@@ -6,6 +6,7 @@ function NoteUnitRow(settings) {
   this._tone_duration_millis = settings.tone_duration_millis;
   this._rest_duration_millis = settings.rest_duration_millis;
   this._button_instruction_list = settings.button_instruction_list;
+  this._button_instruction_checkbox_list = [];
   this._play_k_notes_int = settings.play_k_notes_int;
   this._audio_context = settings.audio_context;
   this._insert_before = settings.insert_before;
@@ -86,7 +87,10 @@ NoteUnitRow.prototype.initialize = function(animation_container_dom_object, daf)
   th_3.appendChild(check_box_3_1);
   th_3.appendChild(check_box_3_2);
   th_3.appendChild(check_box_3_3);
-
+  this._button_instruction_checkbox_list.push(check_box_3_0);
+  this._button_instruction_checkbox_list.push(check_box_3_1);
+  this._button_instruction_checkbox_list.push(check_box_3_2);
+  this._button_instruction_checkbox_list.push(check_box_3_3);
 
   const th_4 = document.createElement("th");
   const input_4 = document.createElement("input");
@@ -190,6 +194,12 @@ NoteUnitRow.prototype.updateGraphic = function(frames_per_second) {
 
 }
 
+NoteUnitRow.prototype.toggleButtonInstruction = function(button_index) {
+  const value = !this._button_instruction_list[button_index];
+  this._button_instruction_list[button_index] = value;
+  this._button_instruction_checkbox_list[button_index].checked = value;
+}
+
 NoteUnitRow.prototype.toneNote = function(time_unit, callback) {
   this._dom_object.scrollIntoView({ block: 'center',  behavior: 'smooth' });
   const oscillator = this._audio_context.createOscillator();
@@ -265,7 +275,8 @@ function start() {
   });
 
 
-  let stop = false;
+  let stop = true;
+  let focused_note_unit_row = null;
   // Play button
   const play_button = document.getElementById("play-button");
   play_button.addEventListener('click', () => {
@@ -274,7 +285,26 @@ function start() {
     let index = 1;
     const next = () => {
       if(index < note_unit_row_list.length&&!stop) {
+        focused_note_unit_row = note_unit_row_list[index].NoteUnitRow;
         note_unit_row_list[index].NoteUnitRow.toneNote(time_unit, () => {
+          index++;
+          next();
+        });
+      }
+    };
+    next();
+  });
+
+  // Play slower button
+  const play_slower_button = document.getElementById("play-slower-button");
+  play_slower_button.addEventListener('click', () => {
+    stop = false;
+    const note_unit_row_list = sheet_table.rows;
+    let index = 1;
+    const next = () => {
+      if(index < note_unit_row_list.length&&!stop) {
+        focused_note_unit_row = note_unit_row_list[index].NoteUnitRow;
+        note_unit_row_list[index].NoteUnitRow.toneNote(time_unit*2, () => {
           index++;
           next();
         });
@@ -289,7 +319,32 @@ function start() {
     stop = true;
   });
 
-  // Play button
+  document.addEventListener('keydown', (event) => {
+    if(stop) {
+      return;
+    }
+    // game.mergeRightward();
+    // render();
+    const keyName = event.key;
+    if (keyName === 'z') {
+      focused_note_unit_row.toggleButtonInstruction(0);
+      return;
+    }
+    else if (keyName === 'x') {
+      focused_note_unit_row.toggleButtonInstruction(1);
+      return;
+    }
+    else if (keyName === 'c') {
+      focused_note_unit_row.toggleButtonInstruction(2);
+      return;
+    }
+    else if (keyName === 'v') {
+      focused_note_unit_row.toggleButtonInstruction(3);
+      return;
+    }
+  }, false);
+
+  // Import button
   const import_button = document.getElementById("import-button");
   const import_file = document.getElementById("import-file");
 
@@ -306,15 +361,15 @@ function start() {
         const doc = domparser.parseFromString(text, 'text/xml');
         const divisions = parseInt(doc.getElementsByTagName("divisions")[0].innerHTML);
         const sound = doc.getElementsByTagName("sound")[0];
-        const tempo = sound?(sound.getAttribute('tempo')?sound.getAttribute('tempo'):108):108;
-        const quarter_note = 1000.0*60.0/tempo/divisions;
+        const tempo = sound?(sound.getAttribute('tempo')?parseInt(sound.getAttribute('tempo')):120):120;
+        const duration_unit = 1000.0*60.0/tempo/divisions;
 
-        const new_time_unit = quarter_note/2;
+        const new_time_unit = duration_unit/2;
 
         console.log('MusicXML imported');
         console.log('divisions: ', divisions);
         console.log('tempo: ', tempo);
-        console.log('quarter_note: ', quarter_note);
+        console.log('duration_unit: ', duration_unit);
         const measures = doc.getElementsByTagName("measure");
         let latest_default_x = 0;
         for(let index = 0; index < measures.length; index++) {
@@ -335,8 +390,11 @@ function start() {
               const step = item.getElementsByTagName('step')[0]?Steps[item.getElementsByTagName('step')[0].innerHTML]:0;
               const alter = item.getElementsByTagName('alter')[0]?parseInt(item.getElementsByTagName('alter')[0].innerHTML):0;
               const octave = item.getElementsByTagName('octave')[0]?parseInt(item.getElementsByTagName('octave')[0].innerHTML):0;
-              const duration = item.getElementsByTagName('duration')[0]?parseInt(item.getElementsByTagName('duration')[0].innerHTML):0;
-              const quarters = item.getElementsByTagName('type')[0]?TypeToQuarters[item.getElementsByTagName('type')[0].innerHTML]:4;
+              let duration = item.getElementsByTagName('duration')[0]?parseInt(item.getElementsByTagName('duration')[0].innerHTML):0;
+              const quarters = item.getElementsByTagName('type')[0]?TypeToQuarters[item.getElementsByTagName('type')[0].innerHTML]:1;
+              if(duration === 0) {
+                duration = quarters*divisions;
+              }
               // console.log('index: ', new_note_unit_list.length);
               // console.log('Note imported');
               // console.log('step: ', step);
@@ -344,6 +402,7 @@ function start() {
               // console.log('octave: ', octave);
               // console.log('duration: ', duration);
               // console.log('quarters: ', quarters);
+              // console.log('quarters: ', item.getElementsByTagName('type')[0].innerHTML);
               new_note_unit_list.push({
                 note_code_int: (item.getElementsByTagName('rest').length)?0:12*octave+step+alter,
                 tone_duration_millis: duration*2,
@@ -364,7 +423,7 @@ function start() {
         }
         time_unit = new_time_unit;
         time_unit_text.value = time_unit;
-        console.log(new_note_unit_list);
+        // console.log(new_note_unit_list);
         new_note_unit_list.forEach((settings, i) => {
           sheet_table_daf.createGraphicalObject(new NoteUnitRow(settings));
         });
@@ -385,6 +444,15 @@ function start() {
 
   import_button.addEventListener('click', () => {
     import_file.click();
+  });
+
+  // Clear button
+  const clear_button = document.getElementById("clear-button");
+  clear_button.addEventListener('click', () => {
+    sheet_table_daf._graphical_objects.forEach((item, i) => {
+      item._to_be_remove = true;
+    });
+
   });
 }
 

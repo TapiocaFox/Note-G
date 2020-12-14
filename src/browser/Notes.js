@@ -128,4 +128,7 @@ const TypeToQuarters = {
   half: 2,
   quarter: 1,
   eighth: 0.5,
+  '16th': 0.25,
+  '32th': 1.0/8.0,
+  '64th': 1.0/16.0,
 };
