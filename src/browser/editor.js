@@ -191,7 +191,7 @@ NoteUnitRow.prototype.updateGraphic = function(frames_per_second) {
 }
 
 NoteUnitRow.prototype.toneNote = function(time_unit, callback) {
-  this._dom_object.scrollIntoView(true);
+  this._dom_object.scrollIntoView({ block: 'center',  behavior: 'smooth' });
   const oscillator = this._audio_context.createOscillator();
   oscillator.type = 'triangle';
   oscillator.frequency.value = Notes[this._note_code_int][0];
@@ -304,7 +304,7 @@ function start() {
         const text = event.target.result;
         const domparser = new DOMParser();
         const doc = domparser.parseFromString(text, 'text/xml');
-        const divisions = doc.getElementsByTagName("divisions")[0].innerHTML;
+        const divisions = parseInt(doc.getElementsByTagName("divisions")[0].innerHTML);
         const sound = doc.getElementsByTagName("sound")[0];
         const tempo = sound?(sound.getAttribute('tempo')?sound.getAttribute('tempo'):108):108;
         const quarter_note = 1000.0*60.0/tempo/divisions;
@@ -346,7 +346,7 @@ function start() {
               // console.log('quarters: ', quarters);
               new_note_unit_list.push({
                 note_code_int: (item.getElementsByTagName('rest').length)?0:12*octave+step+alter,
-                tone_duration_millis: duration,
+                tone_duration_millis: duration*2,
                 rest_duration_millis: 1,
                 button_instruction_list: [false, false, false, false],
                 play_k_notes_int: 1,
