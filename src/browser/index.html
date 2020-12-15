@@ -27,14 +27,13 @@ body {
   display: inline-block;
   margin-left: 20px;
   float: right;
-  width: 200px;
-  height: 250px;
+  width: 150px;
+  height: 200px;
   position: relative;
   background: black;
 }
 #actions {
   float: left;
-
   display: inline-block;
 }
 #sheet-table {
@@ -49,6 +48,7 @@ td, th {
   padding: 8px;
 }
 input, button, select {
+  background: white;
   border-style: solid;
   border-width:1px;
   border-radius: 4px;
@@ -94,7 +94,7 @@ tr:nth-child(even) {
 
       <div id="actions">
         <h1>Actions & Player</h1>
-        <p>Your global actions are here.</p>
+        <p>Your global actions are here. Right hand side is your 100 time units game player.</p>
         <p>
           <button id="play-button">Play</button>
           <button id="play-slower-button">Play slower</button>
@@ -113,6 +113,7 @@ tr:nth-child(even) {
     </div>
   </div>
   <script src="./SimpleDOMAnimationFramework.js"></script>
+  <script src="./NoteUnitRow.js"></script>
   <script src="./Notes.js"></script>
   <script src="./editor.js"></script>
 </body>
