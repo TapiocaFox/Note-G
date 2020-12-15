@@ -313,11 +313,11 @@ function start() {
     let index = 1;
     const next = () => {
       if(index < note_unit_row_list.length&&!stop) {
-        note_unit_row_list[index].NoteUnitRow.toneNote(time_unit, () => {
+        focused_note_unit_row = note_unit_row_list[index].NoteUnitRow;
+        focused_note_unit_row.toneNote(time_unit, () => {
           index++;
           next();
         });
-        focused_note_unit_row = note_unit_row_list[index].NoteUnitRow;
       }
     };
     game_animation_daf.startAnimationAndLogicalTicking();
@@ -378,11 +378,12 @@ function start() {
     let index = 1;
     const next = () => {
       if(index < note_unit_row_list.length&&!stop) {
-        note_unit_row_list[index].NoteUnitRow.toneNote(time_unit*slower_multiplier, () => {
+        focused_note_unit_row = note_unit_row_list[index].NoteUnitRow;
+        focused_note_unit_row.toneNote(time_unit*slower_multiplier, () => {
           index++;
           next();
         });
-        focused_note_unit_row = note_unit_row_list[index].NoteUnitRow;
+
       }
     };
     game_animation_daf.startAnimationAndLogicalTicking();

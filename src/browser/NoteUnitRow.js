@@ -248,5 +248,5 @@ NoteUnitRow.prototype.toneNote = function(time_unit, callback) {
   ], {
     duration: this._tone_duration_time_units*time_unit
   });
-  this._dom_object.scrollIntoView({ block: 'center',  behavior: 'smooth' });
+  this._dom_object.scrollIntoView({ block: 'center' });
 }
