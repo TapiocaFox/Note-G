@@ -1,65 +1,71 @@
 <!DOCTYPE html>
 <html>
-<style>
-body {
-  margin: 0;
-  font-family: arial, sans-serif;
-}
-#sections-container {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-#action-section {
-  padding: 10px 20px;
-  min-height: 200px;
-  border-top: 1px solid black;
-}
-#editor-section {
-  padding: 10px 30px;
-  flex: 1;
-  overflow: auto;
-  background-color: #f0f0f0;
-}
-#game-animation {
-  display: inline-block;
-  margin-left: 20px;
-  float: right;
-  width: 150px;
-  height: 200px;
-  position: relative;
-  background: black;
-}
-#actions {
-  float: left;
-  display: inline-block;
-}
-#sheet-table {
-  border-collapse: collapse;
-  background-color: white;
-  border-radius: 5px;
-  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
-}
-td, th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
-input, button, select {
-  background: white;
-  border-style: solid;
-  border-width:1px;
-  border-radius: 4px;
-  min-height: 15px;
-  font-size: 15px;
-  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2)
-}
-tr:nth-child(even) {
-  background-color: #f0f0f0;
-}
-</style>
+<head>
+  <title>Note G Editor</title>
+  <style>
+  body {
+    margin: 0;
+    font-family: arial, sans-serif;
+  }
+  #sections-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  #action-section {
+    padding: 10px 20px;
+    min-height: 200px;
+    border-top: 1px solid black;
+  }
+  #editor-section {
+    padding: 10px 30px;
+    flex: 1;
+    overflow: auto;
+    background-color: #f0f0f0;
+  }
+  #game-animation {
+    display: inline-block;
+
+    float: left;
+    width: 150px;
+    height: 200px;
+    position: relative;
+    background: black;
+    border-radius: 5px;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+  }
+  #actions {
+    margin-left: 20px;
+    float: left;
+    display: inline-block;
+  }
+  #sheet-table {
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+  }
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+  input, button, select {
+    background: white;
+    border-style: solid;
+    border-width:1px;
+    border-radius: 4px;
+    min-height: 15px;
+    font-size: 15px;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2)
+  }
+  tr:nth-child(even) {
+    background-color: #f0f0f0;
+  }
+  </style>
+<head/>
 <body>
   <div id="sections-container">
     <div id="editor-section">
@@ -91,10 +97,10 @@ tr:nth-child(even) {
       </table>
     </div>
     <div id="action-section">
-
+      <div id="game-animation"></div>
       <div id="actions">
         <h1>Actions & Player</h1>
-        <p>Your global actions are here. Right hand side is your 100 time units game player.</p>
+        <p>Your global actions are here. Left hand side is your 35 time units game player.</p>
         <p>
           <button id="play-button">Play</button>
           <button id="play-slower-button">Play slower</button>
@@ -109,7 +115,7 @@ tr:nth-child(even) {
         </p>
         <!-- <p>copyright©2020 noowyee.</p> -->
       </div>
-      <div id="game-animation"></div>
+
     </div>
   </div>
   <script src="./SimpleDOMAnimationFramework.js"></script>

@@ -20,6 +20,8 @@ function SimpleDOMAnimationFramework(settings) {
 
   this._graphical_objects = settings.graphical_objects;
 
+  this._prev_millis;
+
   this.initialize();
 }
 
@@ -55,7 +57,7 @@ SimpleDOMAnimationFramework.prototype.nextLogicalTick = function()  {
     const remove_myself = () => {
       to_be_remove_graphical_objects_index_list.push(i);
     };
-    graphical_object.nextLogicalTick(this._logical_ticks_interval_ms, this._global_logical_dynamic_parameters, remove_myself);
+    graphical_object.nextLogicalTick(Date.now() - this._prev_millis, this._global_logical_dynamic_parameters, remove_myself);
   });
 
   // Destory graphical_objects.
@@ -101,11 +103,13 @@ SimpleDOMAnimationFramework.prototype.startLogicalTicking = function() {
   const next = () => {
     if(!this._logical_ticking_freezed) {
       this.nextLogicalTick();
+      this._prev_millis = Date.now();
       setTimeout(next, this._logical_ticks_interval_ms);
     }
   };
   this._logical_ticking_freezed = false;
-  next();
+  this._prev_millis = Date.now();
+  setTimeout(next, this._logical_ticks_interval_ms);
 }
 
 SimpleDOMAnimationFramework.prototype.pauseLogicalTicking = function() {

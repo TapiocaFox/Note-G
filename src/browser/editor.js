@@ -9,14 +9,116 @@ function saveByteArray(file_name, byte) {
     link.click();
 };
 
-function ButtonInstructionLayer(settings) {
-  this._time_unit = settings.time_unit;
+function NoteUnitInstructionLayer(settings) {
+  this._time_unit_ms = settings.time_unit_ms;
+  this._display = settings.display;
+  this._screen_height_px;
+  this._time_units_to_be_show = settings.time_units_to_be_show;
+  this._time_units_passed = settings.time_units_passed;
+  this._button_instruction_list = settings.button_instruction_list;
+  this._display_dom;
 }
+
+NoteUnitInstructionLayer.prototype.initialize = function(animation_container_dom_object) {
+  this._animation_container_dom_object = animation_container_dom_object;
+  const animation_container_dom_object_style = window.getComputedStyle(this._animation_container_dom_object);
+  const animation_container_dom_object_width = parseInt(animation_container_dom_object_style.getPropertyValue('width'));
+  const animation_container_dom_object_height = parseInt(animation_container_dom_object_style.getPropertyValue('height'));
+  this._screen_height_px = animation_container_dom_object_height;
+  this._dom_object = document.createElement("div");
+  this._dom_object.style.position = 'absolute';
+  this._dom_object.style.height = '1px';
+  this._dom_object.style.width = animation_container_dom_object_width+'px';
+  this._dom_object.style.backgroundColor = '#808080';
+  this._dom_object.style.top = this._time_units_passed*(this._screen_height_px/this._time_units_to_be_show)+'px';
+  const display = document.createElement("div");
+  this._display_dom = display;
+
+  display.style.position = 'absolute';
+  display.style.left = '0';
+  display.style.bottom = '0';
+  display.style.color = 'white';
+  display.style.opacity = '0.5';
+  display.innerHTML = this._display;
+  if(this._display === 'rest') {
+    this._dom_object.style.backgroundColor = 'red';
+    display.innerHTML = '';
+  }
+  this._dom_object.appendChild(display);
+  if(this._button_instruction_list[0]) {
+    const bar = document.createElement("div");
+    bar.style.position = 'absolute';
+    bar.style.height = '2px';
+    bar.style.width = animation_container_dom_object_width/4+'px';
+    // bar.style.backgroundColor = '#1E90FF';
+    bar.style.backgroundColor = 'white';
+    bar.style.left = '0';
+    bar.style.bottom = '0';
+    this._dom_object.appendChild(bar);
+  }
+  if(this._button_instruction_list[1]) {
+    const bar = document.createElement("div");
+    bar.style.position = 'absolute';
+    bar.style.height = '2px';
+    bar.style.width = animation_container_dom_object_width/4+'px';
+    // bar.style.backgroundColor = '#FF0000';
+    bar.style.backgroundColor = 'white';
+    bar.style.left = animation_container_dom_object_width/4+'px';
+    bar.style.bottom = '0';
+    this._dom_object.appendChild(bar);
+  }
+  if(this._button_instruction_list[2]) {
+    const bar = document.createElement("div");
+    bar.style.position = 'absolute';
+    bar.style.height = '2px';
+    bar.style.width = animation_container_dom_object_width/4+'px';
+    // bar.style.backgroundColor = '#00FF7F';
+    bar.style.backgroundColor = 'white';
+    bar.style.left = 2*animation_container_dom_object_width/4+'px';
+    bar.style.bottom = '0';
+    this._dom_object.appendChild(bar);
+  }
+  if(this._button_instruction_list[3]) {
+    const bar = document.createElement("div");
+    bar.style.position = 'absolute';
+    bar.style.height = '2px';
+    bar.style.width = animation_container_dom_object_width/4+'px';
+    // bar.style.backgroundColor = '#FFD700';
+    bar.style.backgroundColor = 'white';
+    bar.style.left =  3*animation_container_dom_object_width/4+'px';
+    bar.style.bottom = '0';
+    this._dom_object.appendChild(bar);
+  }
+
+  animation_container_dom_object.appendChild(this._dom_object);
+};
+
+NoteUnitInstructionLayer.prototype.nextLogicalTick = function(logical_ticks_interval_ms, global_logical_dynamic_parameters, remove_myself) {
+  const time_units_passed_this_tick = (logical_ticks_interval_ms)/this._time_unit_ms;
+  // console.log(time_units_passed_this_tick);
+  this._time_units_passed += time_units_passed_this_tick;
+  if(this._time_units_passed > this._time_units_to_be_show || global_logical_dynamic_parameters.remove) {
+    remove_myself();
+    this._dom_object.parentNode.removeChild(this._dom_object);
+  }
+};
+
+NoteUnitInstructionLayer.prototype.updateGraphic = function(frames_per_second) {
+  const opacity =  0.5 + 0.5*(this._time_units_passed/this._time_units_to_be_show);
+  this._display_dom.style.opacity = opacity;
+  if(opacity>0.95) {
+    this._display_dom.style.color = '#ADFF2F';
+  }
+  this._dom_object.style.top = this._time_units_passed*(this._screen_height_px/this._time_units_to_be_show)+'px';
+};
 
 function start() {
   let time_unit = 25;
   let timing_window = 25;
+  let slower_multiplier = 2;
+
   let title = "Untitled";
+  const time_units_to_be_show = 35;
 
   const audio_context = new(window.AudioContext || window.webkitAudioContext)();
   let note_unit_list = [{
@@ -32,7 +134,7 @@ function start() {
   const sheet_table = document.getElementById("sheet-table");
   const sheet_table_daf = new SimpleDOMAnimationFramework({
     animation_container_dom_object: sheet_table,
-    logical_ticks_interval_ms: 22,
+    logical_ticks_interval_ms: 80,
     frames_per_second: 10,
     global_logical_dynamic_parameters: {
       time_unit: time_unit
@@ -47,11 +149,10 @@ function start() {
 
   const game_animation = document.getElementById("game-animation");
   const game_animation_daf = new SimpleDOMAnimationFramework({
-    animation_container_dom_object: sheet_table,
-    logical_ticks_interval_ms: 22,
-    frames_per_second: 30,
+    animation_container_dom_object: game_animation,
+    logical_ticks_interval_ms: 20,
+    frames_per_second: 50,
     global_logical_dynamic_parameters: {
-      time_unit: time_unit
     },
     graphical_objects: [],
     next_logical_tick: (global_logical_dynamic_parameters, create_graphical_object, update_global_logical_dynamic_parameters) => {
@@ -60,6 +161,9 @@ function start() {
       });
     }
   });
+  sheet_table_daf.startAnimationAndLogicalTicking();
+
+
 
   const create_note_g_binary = () => {
     let data_bytes_uint8_list = [];
@@ -164,16 +268,60 @@ function start() {
   play_button.addEventListener('click', () => {
     stop = false;
     const note_unit_row_list = sheet_table.rows;
+
+    let instruction_layer_index = 1;
+    let time_unit_sum = 0;
+    let note_unit_instruction_layer_list = [];
+    while(time_unit_sum < time_units_to_be_show && instruction_layer_index < note_unit_row_list.length) {
+      game_animation_daf.createGraphicalObject(new NoteUnitInstructionLayer({
+        button_instruction_list: note_unit_row_list[instruction_layer_index].NoteUnitRow._button_instruction_list,
+        time_unit_ms: time_unit,
+        time_units_to_be_show: time_units_to_be_show,
+        time_units_passed: time_units_to_be_show-time_unit_sum,
+        display: Notes[note_unit_row_list[instruction_layer_index].NoteUnitRow._note_code_int][1]
+      }));
+      time_unit_sum += note_unit_row_list[instruction_layer_index].NoteUnitRow._tone_duration_time_units;
+      time_unit_sum += note_unit_row_list[instruction_layer_index].NoteUnitRow._rest_duration_time_units;
+      instruction_layer_index++;
+    }
+
+    const next_instruction_layer = (wait_time_units) => {
+      setTimeout(() => {
+        if(instruction_layer_index < note_unit_row_list.length && !stop) {
+          let next_wait_time_units = 0;
+          next_wait_time_units += note_unit_row_list[instruction_layer_index].NoteUnitRow._tone_duration_time_units;
+          next_wait_time_units += note_unit_row_list[instruction_layer_index].NoteUnitRow._rest_duration_time_units;
+          next_instruction_layer(next_wait_time_units);
+          instruction_layer_index++;
+          game_animation_daf.createGraphicalObject(new NoteUnitInstructionLayer({
+            button_instruction_list: note_unit_row_list[instruction_layer_index-1].NoteUnitRow._button_instruction_list,
+            time_unit_ms: time_unit,
+            display: Notes[note_unit_row_list[instruction_layer_index-1].NoteUnitRow._note_code_int][1],
+            time_units_to_be_show: time_units_to_be_show,
+            time_units_passed: 0,
+          }));
+        }
+        else {
+          setTimeout(()=> {
+            game_animation_daf.pauseAnimationAndLogicalTicking();
+          }, time_units_to_be_show*time_unit);
+        }
+      }, wait_time_units*time_unit);
+    };
+    next_instruction_layer((time_unit_sum-time_units_to_be_show));
+
     let index = 1;
     const next = () => {
       if(index < note_unit_row_list.length&&!stop) {
-        focused_note_unit_row = note_unit_row_list[index].NoteUnitRow;
         note_unit_row_list[index].NoteUnitRow.toneNote(time_unit, () => {
           index++;
           next();
         });
+        focused_note_unit_row = note_unit_row_list[index].NoteUnitRow;
       }
     };
+    game_animation_daf.startAnimationAndLogicalTicking();
+    // game_animation_daf.pauseAnimationAndLogicalTicking();
     next();
   });
 
@@ -181,17 +329,63 @@ function start() {
   const play_slower_button = document.getElementById("play-slower-button");
   play_slower_button.addEventListener('click', () => {
     stop = false;
+
     const note_unit_row_list = sheet_table.rows;
+
+    let instruction_layer_index = 1;
+    let time_unit_sum = 0;
+    let note_unit_instruction_layer_list = [];
+    while(time_unit_sum < time_units_to_be_show && instruction_layer_index < note_unit_row_list.length) {
+      game_animation_daf.createGraphicalObject(new NoteUnitInstructionLayer({
+        button_instruction_list: note_unit_row_list[instruction_layer_index].NoteUnitRow._button_instruction_list,
+        time_unit_ms: time_unit*slower_multiplier,
+        time_units_to_be_show: time_units_to_be_show,
+        time_units_passed: time_units_to_be_show-time_unit_sum,
+        display: Notes[note_unit_row_list[instruction_layer_index].NoteUnitRow._note_code_int][1]
+      }));
+      time_unit_sum += note_unit_row_list[instruction_layer_index].NoteUnitRow._tone_duration_time_units;
+      time_unit_sum += note_unit_row_list[instruction_layer_index].NoteUnitRow._rest_duration_time_units;
+      instruction_layer_index++;
+    }
+
+    const next_instruction_layer = (wait_time_units) => {
+      setTimeout(() => {
+        if(instruction_layer_index < note_unit_row_list.length && !stop) {
+          let next_wait_time_units = 0;
+          next_wait_time_units += note_unit_row_list[instruction_layer_index].NoteUnitRow._tone_duration_time_units;
+          next_wait_time_units += note_unit_row_list[instruction_layer_index].NoteUnitRow._rest_duration_time_units;
+          next_instruction_layer(next_wait_time_units);
+          instruction_layer_index++;
+          game_animation_daf.createGraphicalObject(new NoteUnitInstructionLayer({
+            button_instruction_list: note_unit_row_list[instruction_layer_index-1].NoteUnitRow._button_instruction_list,
+            time_unit_ms: time_unit*slower_multiplier,
+            display: Notes[note_unit_row_list[instruction_layer_index-1].NoteUnitRow._note_code_int][1],
+            time_units_to_be_show: time_units_to_be_show,
+            time_units_passed: 0,
+          }));
+
+        }
+        else {
+          setTimeout(()=> {
+            game_animation_daf.pauseAnimationAndLogicalTicking();
+          }, time_units_to_be_show*time_unit*slower_multiplier);
+        }
+      }, wait_time_units*time_unit*slower_multiplier);
+    };
+    next_instruction_layer((time_unit_sum-time_units_to_be_show));
+
+
     let index = 1;
     const next = () => {
       if(index < note_unit_row_list.length&&!stop) {
-        focused_note_unit_row = note_unit_row_list[index].NoteUnitRow;
-        note_unit_row_list[index].NoteUnitRow.toneNote(time_unit*2, () => {
+        note_unit_row_list[index].NoteUnitRow.toneNote(time_unit*slower_multiplier, () => {
           index++;
           next();
         });
+        focused_note_unit_row = note_unit_row_list[index].NoteUnitRow;
       }
     };
+    game_animation_daf.startAnimationAndLogicalTicking();
     next();
   });
 
@@ -308,7 +502,7 @@ function start() {
             }
           }
         }
-        time_unit = new_time_unit;
+        time_unit = Math.round(new_time_unit);
         time_unit_text.value = time_unit;
         // console.log(new_note_unit_list);
         new_note_unit_list.forEach((settings, i) => {
@@ -351,6 +545,7 @@ function start() {
   // Clear button
   const clear_button = document.getElementById("clear-button");
   clear_button.addEventListener('click', () => {
+    console.log(123);
     sheet_table_daf._graphical_objects.forEach((item, i) => {
       item._to_be_remove = true;
     });

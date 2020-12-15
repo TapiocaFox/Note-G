@@ -212,23 +212,11 @@ NoteUnitRow.prototype.toggleButtonInstruction = function(button_index) {
 }
 
 NoteUnitRow.prototype.toneNote = function(time_unit, callback) {
-  this._dom_object.scrollIntoView({ block: 'center',  behavior: 'smooth' });
+  setTimeout(callback, (this._rest_duration_time_units+this._tone_duration_time_units)*time_unit);
   const oscillator = this._audio_context.createOscillator();
   oscillator.type = 'triangle';
   oscillator.frequency.value = Notes[this._note_code_int][0];
   oscillator.connect(this._audio_context.destination);
-  this._dom_object.animate([
-    // keyframes
-    {
-      backgroundColor: 'green',
-      opacity: 0
-    },
-    // keyframes
-    {
-    }
-  ], {
-    duration: this._tone_duration_time_units*time_unit
-  });
   oscillator.start();
   setTimeout(() => {
     oscillator.stop();
@@ -245,7 +233,20 @@ NoteUnitRow.prototype.toneNote = function(time_unit, callback) {
       duration: this._rest_duration_time_units*time_unit
     });
     setTimeout(() => {
-      if(callback) callback(false);
+
     }, this._rest_duration_time_units*time_unit);
   }, this._tone_duration_time_units*time_unit);
+  this._dom_object.animate([
+    // keyframes
+    {
+      backgroundColor: 'green',
+      opacity: 0
+    },
+    // keyframes
+    {
+    }
+  ], {
+    duration: this._tone_duration_time_units*time_unit
+  });
+  this._dom_object.scrollIntoView({ block: 'center',  behavior: 'smooth' });
 }
