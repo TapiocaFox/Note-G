@@ -1,6 +1,14 @@
 
 'use strict';
 
+function saveByteArray(file_name, byte) {
+    const blob = new Blob([byte], {type: "application/octet-stream"});
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = file_name;
+    link.click();
+};
+
 function NoteUnitRow(settings) {
   this._note_code_int = settings.note_code_int;
   this._tone_duration_millis = settings.tone_duration_millis;
@@ -243,6 +251,9 @@ NoteUnitRow.prototype.toneNote = function(time_unit, callback) {
 
 function start() {
   let time_unit = 25;
+  let timing_window = 25;
+  let title = "Untitled";
+
   const audio_context = new(window.AudioContext || window.webkitAudioContext)();
   let note_unit_list = [{
     note_code_int: 37,
@@ -271,14 +282,99 @@ function start() {
   });
   sheet_table_daf.startAnimationAndLogicalTicking();
 
+  const create_note_g_binary = () => {
+    let data_bytes_uint8_list = [];
+
+    // Header
+    data_bytes_uint8_list.push(Math.round(time_unit));
+    const note_unit_row_list = sheet_table.rows;
+    const note_units_count = note_unit_row_list.length - 1;
+    data_bytes_uint8_list.push(note_units_count&255);
+    data_bytes_uint8_list.push((note_units_count>>8)&255);
+    data_bytes_uint8_list.push((note_units_count>>16)&255);
+    data_bytes_uint8_list.push((note_units_count>>24)&255);
+    data_bytes_uint8_list.push(timing_window);
+    data_bytes_uint8_list.push(title.length);
+    for(let i = 0; i < title.length; i++) {
+      data_bytes_uint8_list.push(title.charCodeAt(i));
+    }
+    for(let i = 1; i <= note_units_count; i++) {
+      const note_unit_row = note_unit_row_list[i].NoteUnitRow;
+      // Note
+      data_bytes_uint8_list.push(note_unit_row._note_code_int);
+      // Tone duration
+      data_bytes_uint8_list.push(note_unit_row._tone_duration_millis);
+      // Rest duration
+      data_bytes_uint8_list.push(note_unit_row._rest_duration_millis);
+      // Instruction
+      const button_instuction_4bit_int = (note_unit_row._button_instruction_list[0]?1:0)+2*(note_unit_row._button_instruction_list[1]?1:0)+4*(note_unit_row._button_instruction_list[2]?1:0)+8*(note_unit_row._button_instruction_list[3]?1:0);
+      const play_k_notes_4bit_int = note_unit_row._play_k_notes_int;
+      data_bytes_uint8_list.push((play_k_notes_4bit_int<<4)+button_instuction_4bit_int);
+    }
+    return new Uint8Array(data_bytes_uint8_list);
+  };
+
+  const decode_note_g_binary = (unit8_array) => {
+    let pointer = 0;
+
+    let result = {
+      time_unit: null,
+      note_units_count: null,
+      timing_window: null,
+      title: "",
+      note_unit_list: []
+    };
+
+    // Header
+    result.time_unit = unit8_array[pointer++];
+
+    result.note_units_count = unit8_array[pointer++];
+    result.note_units_count += unit8_array[pointer++]<<8;
+    result.note_units_count += unit8_array[pointer++]<<16;
+    result.note_units_count += unit8_array[pointer++]<<24;
+
+    result.timing_window = unit8_array[pointer++];
+
+    const title_length = unit8_array[pointer++];
+
+    for(let i = 0; i < title_length; i++) {
+      result.title += String.fromCharCode(unit8_array[pointer++]);
+    }
+
+    for(let i = 1; i <= result.note_units_count; i++) {
+      const note_unit = {
+        audio_context: audio_context
+      };
+
+      // Note
+      note_unit.note_code_int = unit8_array[pointer++];
+      // Tone duration
+      note_unit.tone_duration_millis = unit8_array[pointer++];
+      // Rest duration
+      note_unit.rest_duration_millis = unit8_array[pointer++];
+
+      // Instruction
+      const instruction_8bit = unit8_array[pointer++];
+      note_unit.button_instruction_list = [instruction_8bit&1, instruction_8bit&2, instruction_8bit&4, instruction_8bit&8];
+      note_unit.play_k_notes_int = instruction_8bit>>4&15;
+      result.note_unit_list.push(note_unit);
+    }
+    return result;
+  };
+
   const time_unit_text = document.getElementById("time-unit");
   const title_text = document.getElementById("title");
+  const timing_window_text = document.getElementById("timing-window");
   time_unit_text.addEventListener('change', (event) => {
     time_unit = parseInt(event.target.value);
   });
 
   title_text.addEventListener('change', (event) => {
-    // time_unit = parseInt(event.target.value);
+    title = event.target.value;
+  });
+
+  timing_window_text.addEventListener('change', (event) => {
+    timing_window = parseInt(event.target.value);
   });
 
 
@@ -363,6 +459,7 @@ function start() {
     if(file_extension === 'xml') {
 
       const file_name = splited[splited.length-2];
+      title = file_name;
       title_text.value = file_name;
       reader.onload = (event) => {
 
@@ -403,7 +500,7 @@ function start() {
               const octave = item.getElementsByTagName('octave')[0]?parseInt(item.getElementsByTagName('octave')[0].innerHTML):0;
               let duration = item.getElementsByTagName('duration')[0]?parseInt(item.getElementsByTagName('duration')[0].innerHTML):0;
               const quarters = item.getElementsByTagName('type')[0]?TypeToQuarters[item.getElementsByTagName('type')[0].innerHTML]:1;
-              if(duration === 0) {
+              if(duration === 0) {new_time_unit
                 duration = quarters*divisions;
               }
               // console.log('index: ', new_note_unit_list.length);
@@ -441,15 +538,25 @@ function start() {
       };
       reader.readAsText(file);
     }
-    else if(file_extension === 'nsg') {
+    else if(file_extension === 'ngs') {
       reader.onload = (event) => {
         const ab = event.target.result;
-        console.log(ab);
+        const sheet_data = decode_note_g_binary(new Uint8Array(ab));
+        console.log(sheet_data);
+        title = sheet_data.title;
+        title_text.value = title;
+        time_unit = sheet_data.time_unit;
+        time_unit_text.value = time_unit;
+        timing_window = sheet_data.timing_window;
+        timing_window_text.value = timing_window;
+        for(let i = 0; i < sheet_data.note_units_count; i++) {
+          sheet_table_daf.createGraphicalObject(new NoteUnitRow(sheet_data.note_unit_list[i]));
+        }
       };
       reader.readAsArrayBuffer(file);
     }
     else {
-      alert('File must be either ".nsg" or ".xml" file.');
+      alert('File must be either ".ngs" or ".xml" file.');
     }
   });
 
@@ -457,6 +564,11 @@ function start() {
     import_file.click();
   });
 
+  const export_button = document.getElementById("export-button");
+
+  export_button.addEventListener('click', ()=> {
+    saveByteArray(title+'.ngs', create_note_g_binary());
+  });
   // Clear button
   const clear_button = document.getElementById("clear-button");
   clear_button.addEventListener('click', () => {
