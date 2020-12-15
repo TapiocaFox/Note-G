@@ -29,16 +29,17 @@ NoteUnitInstructionLayer.prototype.initialize = function(animation_container_dom
   this._dom_object.style.position = 'absolute';
   this._dom_object.style.height = '1px';
   this._dom_object.style.width = animation_container_dom_object_width+'px';
-  this._dom_object.style.backgroundColor = '#808080';
+  this._dom_object.style.background = 'linear-gradient(to right, #808080, #363636)';
   this._dom_object.style.top = this._time_units_passed*(this._screen_height_px/this._time_units_to_be_show)+'px';
   const display = document.createElement("div");
   this._display_dom = display;
 
   display.style.position = 'absolute';
-  display.style.left = '0';
-  display.style.bottom = '0';
+  display.style.left = '3px';
+  display.style.bottom = '3px';
   display.style.color = 'white';
   display.style.opacity = '0.5';
+  display.style.fontSize = '15px';
   display.innerHTML = this._display;
   if(this._display === 'rest') {
     this._dom_object.style.backgroundColor = 'red';
