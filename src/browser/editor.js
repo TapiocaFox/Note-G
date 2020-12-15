@@ -39,10 +39,10 @@ NoteUnitInstructionLayer.prototype.initialize = function(animation_container_dom
   display.style.bottom = '3px';
   display.style.color = 'white';
   display.style.opacity = '0.5';
-  display.style.fontSize = '15px';
+  display.style.fontSize = '14px';
   display.innerHTML = this._display;
   if(this._display === 'rest') {
-    this._dom_object.style.backgroundColor = 'red';
+    this._dom_object.style.background = 'red';
     display.innerHTML = '';
   }
   this._dom_object.appendChild(display);
