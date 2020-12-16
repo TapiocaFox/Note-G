@@ -135,8 +135,8 @@ function start() {
   const sheet_table = document.getElementById("sheet-table");
   const sheet_table_daf = new SimpleDOMAnimationFramework({
     animation_container_dom_object: sheet_table,
-    logical_ticks_interval_ms: 100,
-    frames_per_second: 5,
+    logical_ticks_interval_ms: 200,
+    frames_per_second: 3,
     global_logical_dynamic_parameters: {
       time_unit: time_unit
     },
