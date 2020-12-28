@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <SoftwareSerial.h>
 #include "EventDevice.h"
 #include "BluetoothUploaderDevice.h"
 #include "NoteGGameDevice.h"
@@ -7,13 +8,15 @@ EventDevice ed;
 BluetoothUploaderDevice bluetooth_uploader;
 // NoteGGameDevice note_g;
 NoteGGameDevice note_g;
+SoftwareSerial bt(8, 7);
 
-void BluetoothUploaderDeviceUploadedListener(int bytes_length, byte *bytes) {
-  note_g.importSheetMusic(bytes_length, bytes);
+void BluetoothUploaderDeviceMessageListener(String message) {
+  Serial.println(message);
+  note_g.importSheetMusic(message);
 }
 
 void SetupTheRest() {
-  bluetooth_uploader.onUploaded(BluetoothUploaderDeviceUploadedListener);
+  bluetooth_uploader.onMessage(BluetoothUploaderDeviceMessageListener);
   Serial.println("Setup successfully.");
 }
 
@@ -30,7 +33,7 @@ void BluetoothUploaderSetupFinishedListener() {
 
 void EDSetupFinishedListener() {
   bluetooth_uploader.onSetupFinished(BluetoothUploaderSetupFinishedListener);
-  bluetooth_uploader.setup();
+  bluetooth_uploader.setup(9600, &bt);
 }
 
 void beginEventDeviceSetupSerial() {

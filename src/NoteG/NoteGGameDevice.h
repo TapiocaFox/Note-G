@@ -17,7 +17,7 @@ class NoteGGameDevice: public EventDevice {
       return abandon_this_loop;
     };
 
-    void importSheetMusic(int bytes_length, byte *bytes);
+    void importSheetMusic(String sheet);
     // Stop game, import then start game.
 
     void pushNotification(String title, String message); // loading..., uploading...

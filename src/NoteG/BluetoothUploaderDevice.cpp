@@ -1,9 +1,10 @@
 #include "BluetoothUploaderDevice.h"
 
-void BluetoothUploaderDevice::test() {
-  Serial.println("123 successfully.");
+void BluetoothUploaderDevice::onMessage(void(*message_listener)(String message)) {
+  this->message_listener = message_listener;
 }
 
-void BluetoothUploaderDevice::onUploaded(void(*uploaded_listener)(int bytes_length, byte *bytes)) {
-  this->uploaded_listener = uploaded_listener;
+void BluetoothUploaderDevice::print(String message) {
+  (*(this->bluetooth_serial)).print(message);
 }
+

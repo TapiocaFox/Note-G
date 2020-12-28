@@ -1,5 +1,5 @@
 #include "NoteGGameDevice.h"
 
-void NoteGGameDevice::importSheetMusic(int bytes_length, byte *bytes) {
+void NoteGGameDevice::importSheetMusic(String sheet) {
   Serial.println("bytes_length");
 }
