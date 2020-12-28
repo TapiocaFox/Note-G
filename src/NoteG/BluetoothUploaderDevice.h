@@ -9,25 +9,50 @@ class BluetoothUploaderDevice: public EventDevice {
       void setup(int serial_number, SoftwareSerial *bt) {
         (*bt).begin(serial_number);
         this->bluetooth_serial = bt;
+//        Serial.println("test");
         (*setup_finished_listener)();
-        this->print("AT+RENEW");
-        this->print("AT+RESET");
-        this->print("AT+IMME0");
-        this->print("AT+ROLE0");
-        this->print("AT+ADDR?");
       };
       bool loop(int latest_valid_loop_millisec_offset) override {
-        if(latest_valid_loop_millisec_offset > 200) {
-          String str = "";
-          SoftwareSerial bluetooth_serial = (*(this->bluetooth_serial));
+//        Serial.println("test");
+          if(latest_valid_loop_millisec_offset > 180) {
+            if(this->at < 6 && this->at == this->at_read){
+//            Serial.println(this->at);
+            this->at += 1;
+            if(this->at == 1) {
+              this->print("AT+RENEW");
+            }
+            if(this->at == 2) {
+              this->print("AT+RESET");
+            }
+            if(this->at == 3) {
+              this->print("AT+IMME0");
+            }
+            if(this->at == 4) {
+              this->print("AT+ROLE0");
+            }
+            if(this->at == 5) {
+              this->print("AT+NAMENOTE-G");
+            }
+            if(this->at == 6) {
+              this->print("AT+ADDR?");
+            }
+            return false;
+          }
+          
+          char str[1024];
+          int size = 0;
           while((*(this->bluetooth_serial)).available()) {
             char c = (*(this->bluetooth_serial)).read();
-            if(c != 10 && c!= 13) {
-              str += c;
-            }
+            
+//            Serial.println((char)c);
+            str[size] = c;
+            size += 1;
+            delay(5);
           }
+          str[size] = '\0';
+//          Serial.println(size);
           if(str != "") {
-            this->message_listener(str);
+            this->processMessage(size, str);
           }
           return false;
         }
@@ -35,10 +60,14 @@ class BluetoothUploaderDevice: public EventDevice {
           return true;
         }
       };
-      void onMessage(void(*message_listener)(String message));
+      void onMessage(void(*message_listener)(int size, char* str));
       void print(String string);
     private:
-      void(*message_listener)(String message);
+      int at = 0;
+      int at_read = 0;
+      void reset();
+      void(*message_listener)(int size, char* str);
+      void processMessage(int size, char* str);
       SoftwareSerial *bluetooth_serial;
 };
 

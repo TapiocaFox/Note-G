@@ -1,12 +1,13 @@
-
 'use strict';
 
 function saveByteArray(file_name, byte) {
-    const blob = new Blob([byte], {type: "application/octet-stream"});
-    const link = document.createElement('a');
-    link.href = window.URL.createObjectURL(blob);
-    link.download = file_name;
-    link.click();
+  const blob = new Blob([byte], {
+    type: "application/octet-stream"
+  });
+  const link = document.createElement('a');
+  link.href = window.URL.createObjectURL(blob);
+  link.download = file_name;
+  link.click();
 };
 
 function NoteUnitInstructionLayer(settings) {
@@ -28,9 +29,9 @@ NoteUnitInstructionLayer.prototype.initialize = function(animation_container_dom
   this._dom_object = document.createElement("div");
   this._dom_object.style.position = 'absolute';
   this._dom_object.style.height = '1px';
-  this._dom_object.style.width = animation_container_dom_object_width+'px';
+  this._dom_object.style.width = animation_container_dom_object_width + 'px';
   this._dom_object.style.background = 'linear-gradient(to right, #808080, #363636)';
-  this._dom_object.style.top = this._time_units_passed*(this._screen_height_px/this._time_units_to_be_show)+'px';
+  this._dom_object.style.top = this._time_units_passed * (this._screen_height_px / this._time_units_to_be_show) + 'px';
   const display = document.createElement("div");
   this._display_dom = display;
 
@@ -41,52 +42,52 @@ NoteUnitInstructionLayer.prototype.initialize = function(animation_container_dom
   display.style.opacity = '0.5';
   display.style.fontSize = '14px';
   display.innerHTML = this._display;
-  if(this._display === 'rest') {
+  if (this._display === 'rest') {
     this._dom_object.style.background = 'red';
     display.innerHTML = '';
   }
   this._dom_object.appendChild(display);
-  if(this._button_instruction_list[0]) {
+  if (this._button_instruction_list[0]) {
     const bar = document.createElement("div");
     bar.style.position = 'absolute';
     bar.style.height = '2px';
-    bar.style.width = animation_container_dom_object_width/4+'px';
+    bar.style.width = animation_container_dom_object_width / 4 + 'px';
     // bar.style.backgroundColor = '#1E90FF';
     bar.style.backgroundColor = 'white';
     bar.style.left = '0';
     bar.style.bottom = '0';
     this._dom_object.appendChild(bar);
   }
-  if(this._button_instruction_list[1]) {
+  if (this._button_instruction_list[1]) {
     const bar = document.createElement("div");
     bar.style.position = 'absolute';
     bar.style.height = '2px';
-    bar.style.width = animation_container_dom_object_width/4+'px';
+    bar.style.width = animation_container_dom_object_width / 4 + 'px';
     // bar.style.backgroundColor = '#FF0000';
     bar.style.backgroundColor = 'white';
-    bar.style.left = animation_container_dom_object_width/4+'px';
+    bar.style.left = animation_container_dom_object_width / 4 + 'px';
     bar.style.bottom = '0';
     this._dom_object.appendChild(bar);
   }
-  if(this._button_instruction_list[2]) {
+  if (this._button_instruction_list[2]) {
     const bar = document.createElement("div");
     bar.style.position = 'absolute';
     bar.style.height = '2px';
-    bar.style.width = animation_container_dom_object_width/4+'px';
+    bar.style.width = animation_container_dom_object_width / 4 + 'px';
     // bar.style.backgroundColor = '#00FF7F';
     bar.style.backgroundColor = 'white';
-    bar.style.left = 2*animation_container_dom_object_width/4+'px';
+    bar.style.left = 2 * animation_container_dom_object_width / 4 + 'px';
     bar.style.bottom = '0';
     this._dom_object.appendChild(bar);
   }
-  if(this._button_instruction_list[3]) {
+  if (this._button_instruction_list[3]) {
     const bar = document.createElement("div");
     bar.style.position = 'absolute';
     bar.style.height = '2px';
-    bar.style.width = animation_container_dom_object_width/4+'px';
+    bar.style.width = animation_container_dom_object_width / 4 + 'px';
     // bar.style.backgroundColor = '#FFD700';
     bar.style.backgroundColor = 'white';
-    bar.style.left =  3*animation_container_dom_object_width/4+'px';
+    bar.style.left = 3 * animation_container_dom_object_width / 4 + 'px';
     bar.style.bottom = '0';
     this._dom_object.appendChild(bar);
   }
@@ -95,22 +96,22 @@ NoteUnitInstructionLayer.prototype.initialize = function(animation_container_dom
 };
 
 NoteUnitInstructionLayer.prototype.nextLogicalTick = function(logical_ticks_interval_ms, global_logical_dynamic_parameters, remove_myself) {
-  const time_units_passed_this_tick = (logical_ticks_interval_ms)/this._time_unit_ms;
+  const time_units_passed_this_tick = (logical_ticks_interval_ms) / this._time_unit_ms;
   // console.log(time_units_passed_this_tick);
   this._time_units_passed += time_units_passed_this_tick;
-  if(this._time_units_passed > this._time_units_to_be_show || global_logical_dynamic_parameters.remove) {
+  if (this._time_units_passed > this._time_units_to_be_show || global_logical_dynamic_parameters.remove) {
     remove_myself();
     this._dom_object.parentNode.removeChild(this._dom_object);
   }
 };
 
 NoteUnitInstructionLayer.prototype.updateGraphic = function(frames_per_second) {
-  const opacity =  0.5 + 0.5*(this._time_units_passed/this._time_units_to_be_show);
+  const opacity = 0.5 + 0.5 * (this._time_units_passed / this._time_units_to_be_show);
   this._display_dom.style.opacity = opacity;
-  if(opacity>0.95) {
+  if (opacity > 0.95) {
     this._display_dom.style.color = '#ADFF2F';
   }
-  this._dom_object.style.top = this._time_units_passed*(this._screen_height_px/this._time_units_to_be_show)+'px';
+  this._dom_object.style.top = this._time_units_passed * (this._screen_height_px / this._time_units_to_be_show) + 'px';
 };
 
 function start() {
@@ -153,8 +154,7 @@ function start() {
     animation_container_dom_object: game_animation,
     logical_ticks_interval_ms: 20,
     frames_per_second: 50,
-    global_logical_dynamic_parameters: {
-    },
+    global_logical_dynamic_parameters: {},
     graphical_objects: [],
     next_logical_tick: (global_logical_dynamic_parameters, create_graphical_object, update_global_logical_dynamic_parameters) => {
       update_global_logical_dynamic_parameters({
@@ -173,16 +173,16 @@ function start() {
     data_bytes_uint8_list.push(Math.round(time_unit));
     const note_unit_row_list = sheet_table.rows;
     const note_units_count = note_unit_row_list.length - 1;
-    data_bytes_uint8_list.push(note_units_count&255);
-    data_bytes_uint8_list.push((note_units_count>>8)&255);
-    data_bytes_uint8_list.push((note_units_count>>16)&255);
-    data_bytes_uint8_list.push((note_units_count>>24)&255);
+    data_bytes_uint8_list.push(note_units_count & 255);
+    data_bytes_uint8_list.push((note_units_count >> 8) & 255);
+    data_bytes_uint8_list.push((note_units_count >> 16) & 255);
+    data_bytes_uint8_list.push((note_units_count >> 24) & 255);
     data_bytes_uint8_list.push(timing_window);
     data_bytes_uint8_list.push(title.length);
-    for(let i = 0; i < title.length; i++) {
+    for (let i = 0; i < title.length; i++) {
       data_bytes_uint8_list.push(title.charCodeAt(i));
     }
-    for(let i = 1; i <= note_units_count; i++) {
+    for (let i = 1; i <= note_units_count; i++) {
       const note_unit_row = note_unit_row_list[i].NoteUnitRow;
       // Note
       data_bytes_uint8_list.push(note_unit_row._note_code_int);
@@ -191,9 +191,9 @@ function start() {
       // Rest duration
       data_bytes_uint8_list.push(note_unit_row._rest_duration_time_units);
       // Instruction
-      const button_instuction_4bit_int = (note_unit_row._button_instruction_list[0]?1:0)+2*(note_unit_row._button_instruction_list[1]?1:0)+4*(note_unit_row._button_instruction_list[2]?1:0)+8*(note_unit_row._button_instruction_list[3]?1:0);
+      const button_instuction_4bit_int = (note_unit_row._button_instruction_list[0] ? 1 : 0) + 2 * (note_unit_row._button_instruction_list[1] ? 1 : 0) + 4 * (note_unit_row._button_instruction_list[2] ? 1 : 0) + 8 * (note_unit_row._button_instruction_list[3] ? 1 : 0);
       const play_k_notes_4bit_int = note_unit_row._play_k_notes_int;
-      data_bytes_uint8_list.push((play_k_notes_4bit_int<<4)+button_instuction_4bit_int);
+      data_bytes_uint8_list.push((play_k_notes_4bit_int << 4) + button_instuction_4bit_int);
     }
     return new Uint8Array(data_bytes_uint8_list);
   };
@@ -213,19 +213,19 @@ function start() {
     result.time_unit = unit8_array[pointer++];
 
     result.note_units_count = unit8_array[pointer++];
-    result.note_units_count += unit8_array[pointer++]<<8;
-    result.note_units_count += unit8_array[pointer++]<<16;
-    result.note_units_count += unit8_array[pointer++]<<24;
+    result.note_units_count += unit8_array[pointer++] << 8;
+    result.note_units_count += unit8_array[pointer++] << 16;
+    result.note_units_count += unit8_array[pointer++] << 24;
 
     result.timing_window = unit8_array[pointer++];
 
     const title_length = unit8_array[pointer++];
 
-    for(let i = 0; i < title_length; i++) {
+    for (let i = 0; i < title_length; i++) {
       result.title += String.fromCharCode(unit8_array[pointer++]);
     }
 
-    for(let i = 1; i <= result.note_units_count; i++) {
+    for (let i = 1; i <= result.note_units_count; i++) {
       const note_unit = {
         audio_context: audio_context
       };
@@ -239,8 +239,8 @@ function start() {
 
       // Instruction
       const instruction_8bit = unit8_array[pointer++];
-      note_unit.button_instruction_list = [instruction_8bit&1, instruction_8bit&2, instruction_8bit&4, instruction_8bit&8];
-      note_unit.play_k_notes_int = instruction_8bit>>4&15;
+      note_unit.button_instruction_list = [instruction_8bit & 1, instruction_8bit & 2, instruction_8bit & 4, instruction_8bit & 8];
+      note_unit.play_k_notes_int = instruction_8bit >> 4 & 15;
       result.note_unit_list.push(note_unit);
     }
     return result;
@@ -264,6 +264,48 @@ function start() {
 
   let stop = true;
   let focused_note_unit_row = null;
+
+  // Upload button
+  function connectBLE() {
+    const service = 0xFFE0;
+    const characteristic = 0xFFE1;
+    //BLE setup. Connect and get service/characteristic notifications
+    navigator.bluetooth.requestDevice({ filters: [{ services: [service] }] })
+      .then(device => device.gatt.connect())
+      .then(server => server.getPrimaryService(service))
+      .then(service => service.getCharacteristic(characteristic))
+      .then(characteristic => {
+        // const str = "123";
+        // const arr = new Uint8Array(str.length);
+        // for(var i=str.length; i--; )
+        //     arr[i] = str.charCodeAt(i);
+        const ab = create_note_g_binary();
+        console.log(ab);
+        characteristic.writeValue(ab);
+        // return characteristic.startNotifications()
+        //   .then(_ => {
+        //     characteristic.addEventListener('characteristicvaluechanged',
+        //       handleCharacteristicValueChanged);
+          // });
+      })
+      .then(_ => {
+        console.log('Notifications have been started.');
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+    // function handleCharacteristicValueChanged(event) {
+    //   const value = event.target.value;
+    //   console.log(value);
+    // }
+  }
+  const upload_button = document.getElementById("upload-button");
+  upload_button.addEventListener('click', () => {
+    // console.log(123);
+    connectBLE();
+  });
+
   // Play button
   const play_button = document.getElementById("play-button");
   play_button.addEventListener('click', () => {
@@ -273,12 +315,12 @@ function start() {
     let instruction_layer_index = 1;
     let time_unit_sum = 0;
     let note_unit_instruction_layer_list = [];
-    while(time_unit_sum < time_units_to_be_show && instruction_layer_index < note_unit_row_list.length) {
+    while (time_unit_sum < time_units_to_be_show && instruction_layer_index < note_unit_row_list.length) {
       game_animation_daf.createGraphicalObject(new NoteUnitInstructionLayer({
         button_instruction_list: note_unit_row_list[instruction_layer_index].NoteUnitRow._button_instruction_list,
         time_unit_ms: time_unit,
         time_units_to_be_show: time_units_to_be_show,
-        time_units_passed: time_units_to_be_show-time_unit_sum,
+        time_units_passed: time_units_to_be_show - time_unit_sum,
         display: Notes[note_unit_row_list[instruction_layer_index].NoteUnitRow._note_code_int][1]
       }));
       time_unit_sum += note_unit_row_list[instruction_layer_index].NoteUnitRow._tone_duration_time_units;
@@ -288,32 +330,31 @@ function start() {
 
     const next_instruction_layer = (wait_time_units) => {
       setTimeout(() => {
-        if(instruction_layer_index < note_unit_row_list.length && !stop) {
+        if (instruction_layer_index < note_unit_row_list.length && !stop) {
           let next_wait_time_units = 0;
           next_wait_time_units += note_unit_row_list[instruction_layer_index].NoteUnitRow._tone_duration_time_units;
           next_wait_time_units += note_unit_row_list[instruction_layer_index].NoteUnitRow._rest_duration_time_units;
           next_instruction_layer(next_wait_time_units);
           instruction_layer_index++;
           game_animation_daf.createGraphicalObject(new NoteUnitInstructionLayer({
-            button_instruction_list: note_unit_row_list[instruction_layer_index-1].NoteUnitRow._button_instruction_list,
+            button_instruction_list: note_unit_row_list[instruction_layer_index - 1].NoteUnitRow._button_instruction_list,
             time_unit_ms: time_unit,
-            display: Notes[note_unit_row_list[instruction_layer_index-1].NoteUnitRow._note_code_int][1],
+            display: Notes[note_unit_row_list[instruction_layer_index - 1].NoteUnitRow._note_code_int][1],
             time_units_to_be_show: time_units_to_be_show,
             time_units_passed: 0,
           }));
-        }
-        else {
-          setTimeout(()=> {
+        } else {
+          setTimeout(() => {
             game_animation_daf.pauseAnimationAndLogicalTicking();
-          }, time_units_to_be_show*time_unit);
+          }, time_units_to_be_show * time_unit);
         }
-      }, wait_time_units*time_unit);
+      }, wait_time_units * time_unit);
     };
-    next_instruction_layer((time_unit_sum-time_units_to_be_show));
+    next_instruction_layer((time_unit_sum - time_units_to_be_show));
 
     let index = 1;
     const next = () => {
-      if(index < note_unit_row_list.length&&!stop) {
+      if (index < note_unit_row_list.length && !stop) {
         focused_note_unit_row = note_unit_row_list[index].NoteUnitRow;
         focused_note_unit_row.toneNote(time_unit, () => {
           index++;
@@ -336,12 +377,12 @@ function start() {
     let instruction_layer_index = 1;
     let time_unit_sum = 0;
     let note_unit_instruction_layer_list = [];
-    while(time_unit_sum < time_units_to_be_show && instruction_layer_index < note_unit_row_list.length) {
+    while (time_unit_sum < time_units_to_be_show && instruction_layer_index < note_unit_row_list.length) {
       game_animation_daf.createGraphicalObject(new NoteUnitInstructionLayer({
         button_instruction_list: note_unit_row_list[instruction_layer_index].NoteUnitRow._button_instruction_list,
-        time_unit_ms: time_unit*slower_multiplier,
+        time_unit_ms: time_unit * slower_multiplier,
         time_units_to_be_show: time_units_to_be_show,
-        time_units_passed: time_units_to_be_show-time_unit_sum,
+        time_units_passed: time_units_to_be_show - time_unit_sum,
         display: Notes[note_unit_row_list[instruction_layer_index].NoteUnitRow._note_code_int][1]
       }));
       time_unit_sum += note_unit_row_list[instruction_layer_index].NoteUnitRow._tone_duration_time_units;
@@ -351,36 +392,35 @@ function start() {
 
     const next_instruction_layer = (wait_time_units) => {
       setTimeout(() => {
-        if(instruction_layer_index < note_unit_row_list.length && !stop) {
+        if (instruction_layer_index < note_unit_row_list.length && !stop) {
           let next_wait_time_units = 0;
           next_wait_time_units += note_unit_row_list[instruction_layer_index].NoteUnitRow._tone_duration_time_units;
           next_wait_time_units += note_unit_row_list[instruction_layer_index].NoteUnitRow._rest_duration_time_units;
           next_instruction_layer(next_wait_time_units);
           instruction_layer_index++;
           game_animation_daf.createGraphicalObject(new NoteUnitInstructionLayer({
-            button_instruction_list: note_unit_row_list[instruction_layer_index-1].NoteUnitRow._button_instruction_list,
-            time_unit_ms: time_unit*slower_multiplier,
-            display: Notes[note_unit_row_list[instruction_layer_index-1].NoteUnitRow._note_code_int][1],
+            button_instruction_list: note_unit_row_list[instruction_layer_index - 1].NoteUnitRow._button_instruction_list,
+            time_unit_ms: time_unit * slower_multiplier,
+            display: Notes[note_unit_row_list[instruction_layer_index - 1].NoteUnitRow._note_code_int][1],
             time_units_to_be_show: time_units_to_be_show,
             time_units_passed: 0,
           }));
 
-        }
-        else {
-          setTimeout(()=> {
+        } else {
+          setTimeout(() => {
             game_animation_daf.pauseAnimationAndLogicalTicking();
-          }, time_units_to_be_show*time_unit*slower_multiplier);
+          }, time_units_to_be_show * time_unit * slower_multiplier);
         }
-      }, wait_time_units*time_unit*slower_multiplier);
+      }, wait_time_units * time_unit * slower_multiplier);
     };
-    next_instruction_layer((time_unit_sum-time_units_to_be_show));
+    next_instruction_layer((time_unit_sum - time_units_to_be_show));
 
 
     let index = 1;
     const next = () => {
-      if(index < note_unit_row_list.length&&!stop) {
+      if (index < note_unit_row_list.length && !stop) {
         focused_note_unit_row = note_unit_row_list[index].NoteUnitRow;
-        focused_note_unit_row.toneNote(time_unit*slower_multiplier, () => {
+        focused_note_unit_row.toneNote(time_unit * slower_multiplier, () => {
           index++;
           next();
         });
@@ -398,7 +438,7 @@ function start() {
   });
 
   document.addEventListener('keydown', (event) => {
-    if(stop) {
+    if (stop) {
       return;
     }
     // game.mergeRightward();
@@ -407,16 +447,13 @@ function start() {
     if (keyName === 'z') {
       focused_note_unit_row.toggleButtonInstruction(0);
       return;
-    }
-    else if (keyName === 'x') {
+    } else if (keyName === 'x') {
       focused_note_unit_row.toggleButtonInstruction(1);
       return;
-    }
-    else if (keyName === 'c') {
+    } else if (keyName === 'c') {
       focused_note_unit_row.toggleButtonInstruction(2);
       return;
-    }
-    else if (keyName === 'v') {
+    } else if (keyName === 'v') {
       focused_note_unit_row.toggleButtonInstruction(3);
       return;
     }
@@ -431,9 +468,9 @@ function start() {
     const splited = import_file.value.split(/(\\|\/|\.)/g);
     const file_extension = splited.pop();
     const reader = new FileReader();
-    if(file_extension === 'xml') {
+    if (file_extension === 'xml') {
 
-      const file_name = splited[splited.length-2];
+      const file_name = splited[splited.length - 2];
       title = file_name;
       title_text.value = file_name;
       reader.onload = (event) => {
@@ -444,10 +481,10 @@ function start() {
         const doc = domparser.parseFromString(text, 'text/xml');
         const divisions = parseInt(doc.getElementsByTagName("divisions")[0].innerHTML);
         const sound = doc.getElementsByTagName("sound")[0];
-        const tempo = sound?(sound.getAttribute('tempo')?parseInt(sound.getAttribute('tempo')):120):120;
-        const duration_unit = 1000.0*60.0/tempo/divisions;
+        const tempo = sound ? (sound.getAttribute('tempo') ? parseInt(sound.getAttribute('tempo')) : 120) : 120;
+        const duration_unit = 1000.0 * 60.0 / tempo / divisions;
 
-        const new_time_unit = duration_unit/2;
+        const new_time_unit = duration_unit / 2;
 
         console.log('MusicXML imported');
         console.log('divisions: ', divisions);
@@ -455,28 +492,29 @@ function start() {
         console.log('duration_unit: ', duration_unit);
         const measures = doc.getElementsByTagName("measure");
         let latest_default_x = 0;
-        for(let index = 0; index < measures.length; index++) {
+        for (let index = 0; index < measures.length; index++) {
           const nodes = measures[index].childNodes;
-          if(index === 0) {
-            if(measures[index].getElementsByTagName("clef").length > 1) {
+          if (index === 0) {
+            if (measures[index].getElementsByTagName("clef").length > 1) {
               alert('This sheet has more then 1 clef. This may cause some errors. Click ok to continue.');
             }
           }
 
-          for(let j = 0; j < nodes.length; j++) {
+          for (let j = 0; j < nodes.length; j++) {
             const item = nodes[j];
-            if(item.tagName === 'note' || item.tagName === 'rest' ) {
-              if(latest_default_x === item.getAttribute('default-x')) {
+            if (item.tagName === 'note' || item.tagName === 'rest') {
+              if (latest_default_x === item.getAttribute('default-x')) {
                 continue;
               }
               latest_default_x = item.getAttribute('default-x');
-              const step = item.getElementsByTagName('step')[0]?Steps[item.getElementsByTagName('step')[0].innerHTML]:0;
-              const alter = item.getElementsByTagName('alter')[0]?parseInt(item.getElementsByTagName('alter')[0].innerHTML):0;
-              const octave = item.getElementsByTagName('octave')[0]?parseInt(item.getElementsByTagName('octave')[0].innerHTML):0;
-              let duration = item.getElementsByTagName('duration')[0]?parseInt(item.getElementsByTagName('duration')[0].innerHTML):0;
-              const quarters = item.getElementsByTagName('type')[0]?TypeToQuarters[item.getElementsByTagName('type')[0].innerHTML]:1;
-              if(duration === 0) {new_time_unit
-                duration = quarters*divisions;
+              const step = item.getElementsByTagName('step')[0] ? Steps[item.getElementsByTagName('step')[0].innerHTML] : 0;
+              const alter = item.getElementsByTagName('alter')[0] ? parseInt(item.getElementsByTagName('alter')[0].innerHTML) : 0;
+              const octave = item.getElementsByTagName('octave')[0] ? parseInt(item.getElementsByTagName('octave')[0].innerHTML) : 0;
+              let duration = item.getElementsByTagName('duration')[0] ? parseInt(item.getElementsByTagName('duration')[0].innerHTML) : 0;
+              const quarters = item.getElementsByTagName('type')[0] ? TypeToQuarters[item.getElementsByTagName('type')[0].innerHTML] : 1;
+              if (duration === 0) {
+                new_time_unit
+                duration = quarters * divisions;
               }
               // console.log('index: ', new_note_unit_list.length);
               // console.log('Note imported');
@@ -487,19 +525,17 @@ function start() {
               // console.log('quarters: ', quarters);
               // console.log('quarters: ', item.getElementsByTagName('type')[0].innerHTML);
               new_note_unit_list.push({
-                note_code_int: (item.getElementsByTagName('rest').length)?0:12*octave+step+alter,
-                tone_duration_time_units: duration*2,
+                note_code_int: (item.getElementsByTagName('rest').length) ? 0 : 12 * octave + step + alter,
+                tone_duration_time_units: duration * 2,
                 rest_duration_time_units: 1,
                 button_instruction_list: [false, false, false, false],
                 play_k_notes_int: 1,
                 time_unit: new_time_unit,
                 audio_context: audio_context
               });
-            }
-            else if(item.tagName === 'backup') {
+            } else if (item.tagName === 'backup') {
               break;
-            }
-            else {
+            } else {
 
             }
           }
@@ -512,8 +548,7 @@ function start() {
         });
       };
       reader.readAsText(file);
-    }
-    else if(file_extension === 'ngs') {
+    } else if (file_extension === 'ngs') {
       reader.onload = (event) => {
         const ab = event.target.result;
         const sheet_data = decode_note_g_binary(new Uint8Array(ab));
@@ -524,13 +559,12 @@ function start() {
         time_unit_text.value = time_unit;
         timing_window = sheet_data.timing_window;
         timing_window_text.value = timing_window;
-        for(let i = 0; i < sheet_data.note_units_count; i++) {
+        for (let i = 0; i < sheet_data.note_units_count; i++) {
           sheet_table_daf.createGraphicalObject(new NoteUnitRow(sheet_data.note_unit_list[i]));
         }
       };
       reader.readAsArrayBuffer(file);
-    }
-    else {
+    } else {
       alert('File must be either ".ngs" or ".xml" file.');
     }
   });
@@ -541,8 +575,8 @@ function start() {
 
   const export_button = document.getElementById("export-button");
 
-  export_button.addEventListener('click', ()=> {
-    saveByteArray(title+'.ngs', create_note_g_binary());
+  export_button.addEventListener('click', () => {
+    saveByteArray(title + '.ngs', create_note_g_binary());
   });
   // Clear button
   const clear_button = document.getElementById("clear-button");

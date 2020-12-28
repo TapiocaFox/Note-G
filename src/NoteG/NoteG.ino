@@ -2,21 +2,26 @@
 #include <SoftwareSerial.h>
 #include "EventDevice.h"
 #include "BluetoothUploaderDevice.h"
+#include "SerialDevice.h"
 #include "NoteGGameDevice.h"
 
 EventDevice ed;
+SerialDevice sd;
 BluetoothUploaderDevice bluetooth_uploader;
-// NoteGGameDevice note_g;
 NoteGGameDevice note_g;
 SoftwareSerial bt(8, 7);
 
-void BluetoothUploaderDeviceMessageListener(String message) {
-  Serial.println(message);
-  note_g.importSheetMusic(message);
+void BluetoothUploaderDeviceMessageListener(int size, char* str) {
+//  Serial.println(message);
+  note_g.importSheetMusic(size, str);
+}
+
+void SDMessageListener(String message) {
+  sd.printLine(message);
+//  bsd.print(message);
 }
 
 void SetupTheRest() {
-  bluetooth_uploader.onMessage(BluetoothUploaderDeviceMessageListener);
   Serial.println("Setup successfully.");
 }
 
@@ -31,26 +36,31 @@ void BluetoothUploaderSetupFinishedListener() {
   note_g.setup();
 }
 
-void EDSetupFinishedListener() {
+void SDSetupFinishedListener() {
+  bluetooth_uploader.onMessage(BluetoothUploaderDeviceMessageListener);
   bluetooth_uploader.onSetupFinished(BluetoothUploaderSetupFinishedListener);
   bluetooth_uploader.setup(9600, &bt);
 }
 
 void beginEventDeviceSetupSerial() {
-  ed.onSetupFinished(EDSetupFinishedListener);
-  ed.setup();
+  sd.onMessage(SDMessageListener);
+  sd.onSetupFinished(SDSetupFinishedListener);
+  sd.setup(9600);
 }
 
 void setup() {
-  Serial.begin(9600);
   beginEventDeviceSetupSerial();
 }
 
 int bluetooth_uploader_latest_valid_loop_millisec = millis();
 int note_g_latest_valid_loop_millisec = millis();
+int serial_device_latest_valid_loop_millisec = millis();
 void loop() {
   // ed.loop();
 
+  if(!sd.loop(millis() - serial_device_latest_valid_loop_millisec)) {
+    serial_device_latest_valid_loop_millisec = millis();
+  };
   if(!bluetooth_uploader.loop(millis() - bluetooth_uploader_latest_valid_loop_millisec)) {
     bluetooth_uploader_latest_valid_loop_millisec = millis();
   };
