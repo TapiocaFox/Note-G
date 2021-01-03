@@ -19,6 +19,12 @@ MCUFRIEND_kbv tft;
 #define YELLOW  0xFFE0
 #define WHITE   0xFFFF
 
+#define BUTTON_1 10
+int buttonState;
+int lastButtonState = LOW; 
+unsigned long lastDebounceTime = 0;  // the last time the output pin was toggled
+unsigned long debounceDelay = 50;  
+
 #ifndef min
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #endif
@@ -91,6 +97,7 @@ void FillRectFast(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color){
 
 void setup(void) {
     Serial.begin(9600);
+    pinMode(BUTTON_1, INPUT);
     uint32_t when = millis();
     //    while (!Serial) ;   //hangs a Leonardo until you connect a Serial
     if (!Serial) delay(5000);           //allow some time for Leonardo
@@ -109,11 +116,32 @@ void setup(void) {
 }
 
 void loop(){
+  int reading = digitalRead(BUTTON_1);
+  if (reading != lastButtonState) {
+    // reset the debouncing timer
+    lastDebounceTime = millis();
+  }
+  if ((millis() - lastDebounceTime) > debounceDelay) {
+    // whatever the reading is at, it's been there for longer than the debounce
+    // delay, so take it as the actual current state:
+
+    // if the button state has changed:
+    if (reading != buttonState) {
+      buttonState = reading;
+
+      // only toggle the LED if the new button state is HIGH
+      if (buttonState == HIGH) {
+        Serial.println("pressed!");
+      }
+    }
+  }
+  lastButtonState = reading;
+
   showmsgXY(290, 0, 1, WHITE, String(freeMemory()).c_str());
   //if (++scroll >= 25) scroll = 0;
   //tft.vertScroll(60, 320, scroll*10);
-  DrawFallingRect(1, 100);
-  DrawFallingRect(2, 100);
+  DrawFallingRect(1, 300);
+  DrawFallingRect(2, 200);
   DrawFallingRect(3, 100);
-  DrawFallingRect(4, 100);
+  DrawFallingRect(4, 50);
 }
