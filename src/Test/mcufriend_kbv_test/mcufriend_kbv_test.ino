@@ -31,6 +31,8 @@ extern char *__brkval;
 #endif  // __arm__
 
 int score = 0;
+int RectLastPos[4] = {0,0,0,0};
+int RectStartTime[4]= {0,0,0,0};
  
 int freeMemory() {
   char top;
@@ -59,7 +61,26 @@ void showmsgXY(int x, int y, int sz, int color,const char *msg)
   tft.print(msg);
 }
 
-//void FallBar
+void DrawFallingRect(int lane,int pixel_per_sec){
+  // start: 60, width: 100
+  if(RectStartTime[lane-1] == 0 ){ 
+    RectStartTime[lane-1] =  millis();
+    Serial.print(""); Serial.println(""); 
+    RectLastPos[lane-1] = 60;
+    FillRectFast(120*(lane-1)+10, RectLastPos[lane-1], 100, 10, WHITE);
+  }
+  else{
+    FillRectFast(120*(lane-1)+10, RectLastPos[lane-1], 100, 10, BLACK);
+    RectLastPos[lane-1] = pixel_per_sec*(millis() - RectStartTime[lane-1])/1000 + 60;
+    FillRectFast(120*(lane-1)+10, RectLastPos[lane-1], 100, 10, WHITE);
+  }
+}
+
+void FillRectFast(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color){
+  for(uint16_t i = 0; i < h; i++){
+    tft.drawFastHLine(x, y+i, w, color);
+  }
+}
 
 void setup(void) {
     Serial.begin(9600);
@@ -83,4 +104,8 @@ void setup(void) {
 
 void loop(){
   showmsgXY(450, 0, 1, WHITE, String(freeMemory()).c_str());
+  
+  tft.vertScroll(60, 320, 10);
+  //DrawFallingRect(1, 30);
+  
 }
