@@ -103,9 +103,11 @@ void setup(void) {
 }
 
 void loop(){
-  showmsgXY(450, 0, 1, WHITE, String(freeMemory()).c_str());
+  showmsgXY(290, 0, 1, WHITE, String(freeMemory()).c_str());
   //if (++scroll >= 25) scroll = 0;
   //tft.vertScroll(60, 320, scroll*10);
-  DrawFallingRect(1, 30);
-  
+  DrawFallingRect(1, 100);
+  DrawFallingRect(2, 100);
+  DrawFallingRect(3, 100);
+  DrawFallingRect(4, 100);
 }
