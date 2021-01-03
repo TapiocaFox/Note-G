@@ -33,6 +33,7 @@ extern char *__brkval;
 int score = 0;
 int RectLastPos[4] = {0,0,0,0};
 int RectStartTime[4]= {0,0,0,0};
+int scroll = 0;
  
 int freeMemory() {
   char top;
@@ -46,9 +47,9 @@ int freeMemory() {
 }
 
 void drawLines(){
-  tft.drawFastVLine(120, 60, 260, YELLOW);
-  tft.drawFastVLine(240, 60, 260, YELLOW);
-  tft.drawFastVLine(360, 60, 260, YELLOW);
+  tft.drawFastVLine(80, 60, 420, YELLOW);
+  tft.drawFastVLine(160, 60, 420, YELLOW);
+  tft.drawFastVLine(240, 60, 420, YELLOW);
 }
 
 void showmsgXY(int x, int y, int sz, int color,const char *msg)
@@ -67,12 +68,12 @@ void DrawFallingRect(int lane,int pixel_per_sec){
     RectStartTime[lane-1] =  millis();
     Serial.print(""); Serial.println(""); 
     RectLastPos[lane-1] = 60;
-    FillRectFast(120*(lane-1)+10, RectLastPos[lane-1], 100, 10, WHITE);
+    FillRectFast(80*(lane-1)+5, RectLastPos[lane-1], 70, 10, WHITE);
   }
   else{
-    FillRectFast(120*(lane-1)+10, RectLastPos[lane-1], 100, 10, BLACK);
+    FillRectFast(80*(lane-1)+5, RectLastPos[lane-1], 70, 10, BLACK);
     RectLastPos[lane-1] = pixel_per_sec*(millis() - RectStartTime[lane-1])/1000 + 60;
-    FillRectFast(120*(lane-1)+10, RectLastPos[lane-1], 100, 10, WHITE);
+    FillRectFast(80*(lane-1)+5, RectLastPos[lane-1], 70, 10, WHITE);
   }
 }
 
@@ -96,16 +97,15 @@ void setup(void) {
 //    ID = 0x9329;                             // force ID
     tft.begin(ID);
     tft.fillScreen(BLACK);
-    tft.setRotation(1);
+    tft.setRotation(0);
     drawLines();
     showmsgXY(10, 10, 3, RED, "Score: ");
-    //showmsgXY(20, 20, 3, YELLOW, "NoteG");
 }
 
 void loop(){
   showmsgXY(450, 0, 1, WHITE, String(freeMemory()).c_str());
-  
-  tft.vertScroll(60, 320, 10);
-  //DrawFallingRect(1, 30);
+  //if (++scroll >= 25) scroll = 0;
+  //tft.vertScroll(60, 320, scroll*10);
+  DrawFallingRect(1, 30);
   
 }
