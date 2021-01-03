@@ -66,14 +66,20 @@ void DrawFallingRect(int lane,int pixel_per_sec){
   // start: 60, width: 100
   if(RectStartTime[lane-1] == 0 ){ 
     RectStartTime[lane-1] =  millis();
-    Serial.print(""); Serial.println(""); 
     RectLastPos[lane-1] = 60;
     FillRectFast(80*(lane-1)+5, RectLastPos[lane-1], 70, 10, WHITE);
   }
   else{
-    FillRectFast(80*(lane-1)+5, RectLastPos[lane-1], 70, 10, BLACK);
+    //FillRectFast(80*(lane-1)+5, RectLastPos[lane-1], 70, 10, BLACK);
+    int lastPos = RectLastPos[lane-1];
     RectLastPos[lane-1] = pixel_per_sec*(millis() - RectStartTime[lane-1])/1000 + 60;
-    FillRectFast(80*(lane-1)+5, RectLastPos[lane-1], 70, 10, WHITE);
+    for(uint16_t i=lastPos; i < RectLastPos[lane-1]; i++){
+      tft.drawFastHLine(80*(lane-1)+5, i, 70, BLACK);
+    }
+    for(uint16_t i=lastPos+10; i < (RectLastPos[lane-1]+10); i++){
+      tft.drawFastHLine(80*(lane-1)+5, i, 70, WHITE);
+    }
+    // FillRectFast(80*(lane-1)+5, RectLastPos[lane-1], 70, 10, WHITE);
   }
 }
 
