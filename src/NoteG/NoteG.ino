@@ -4,6 +4,7 @@
 #include "BluetoothUploaderDevice.h"
 #include "SerialDevice.h"
 #include "NoteGGameDevice.h"
+#include "Display.h"
 
 EventDevice ed;
 SerialDevice sd;
@@ -50,6 +51,7 @@ void beginEventDeviceSetupSerial() {
 
 void setup() {
   beginEventDeviceSetupSerial();
+  InitializeDisplay();
 }
 
 int bluetooth_uploader_latest_valid_loop_millisec = millis();
@@ -57,6 +59,9 @@ int note_g_latest_valid_loop_millisec = millis();
 int serial_device_latest_valid_loop_millisec = millis();
 void loop() {
   // ed.loop();
+
+  //show free memory msg
+  showmsgXY(290, 0, 1, WHITE, String(freeMemory()).c_str());
 
   if(!sd.loop(millis() - serial_device_latest_valid_loop_millisec)) {
     serial_device_latest_valid_loop_millisec = millis();
