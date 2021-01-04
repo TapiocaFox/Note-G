@@ -10,7 +10,7 @@ EventDevice ed;
 SerialDevice sd;
 BluetoothUploaderDevice bluetooth_uploader;
 NoteGGameDevice note_g;
-SoftwareSerial bt(8, 7);
+SoftwareSerial bt(10, 11);
 
 void BluetoothUploaderDeviceMessageListener(int size, char* str) {
 //  Serial.println(message);
