@@ -269,24 +269,37 @@ function start() {
   function connectBLE() {
     const service = 0xFFE0;
     const characteristic = 0xFFE1;
+    const packet_size = 32;
+    let packet_num = 0;
+    const ab = create_note_g_binary();
+    const total_packet = Math.ceil(ab.length/packet_size);
+
+    console.log(ab);
     //BLE setup. Connect and get service/characteristic notifications
     navigator.bluetooth.requestDevice({ filters: [{ services: [service] }] })
       .then(device => device.gatt.connect())
       .then(server => server.getPrimaryService(service))
       .then(service => service.getCharacteristic(characteristic))
       .then(characteristic => {
+        function handleCharacteristicValueChanged(event) {
+          if(packet_num < total_packet) {
+            characteristic.writeValue(new Uint8Array([1, ...ab.slice(packet_num*packet_size, Math.min((packet_num+1)*packet_size), ab.length)]));
+            packet_num++;
+          }
+
+          // const value = event.target.value;
+          // console.log(value);
+        }
         // const str = "123";
         // const arr = new Uint8Array(str.length);
         // for(var i=str.length; i--; )
         //     arr[i] = str.charCodeAt(i);
-        const ab = create_note_g_binary();
-        console.log(ab);
-        characteristic.writeValue(ab);
-        // return characteristic.startNotifications()
-        //   .then(_ => {
-        //     characteristic.addEventListener('characteristicvaluechanged',
-        //       handleCharacteristicValueChanged);
-          // });
+        characteristic.writeValue(new Uint8Array([0, total_packet]));
+        return characteristic.startNotifications()
+          .then(_ => {
+            characteristic.addEventListener('characteristicvaluechanged',
+              handleCharacteristicValueChanged);
+          });
       })
       .then(_ => {
         console.log('Notifications have been started.');
@@ -295,10 +308,7 @@ function start() {
         console.log(error);
       });
 
-    // function handleCharacteristicValueChanged(event) {
-    //   const value = event.target.value;
-    //   console.log(value);
-    // }
+
   }
   const upload_button = document.getElementById("upload-button");
   upload_button.addEventListener('click', () => {

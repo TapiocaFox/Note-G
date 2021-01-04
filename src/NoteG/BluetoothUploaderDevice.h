@@ -39,7 +39,7 @@ class BluetoothUploaderDevice: public EventDevice {
             return false;
           }
           
-          char str[1024];
+          char str[64];
           int size = 0;
           while((*(this->bluetooth_serial)).available()) {
             char c = (*(this->bluetooth_serial)).read();
@@ -51,7 +51,7 @@ class BluetoothUploaderDevice: public EventDevice {
           }
           str[size] = '\0';
 //          Serial.println(size);
-          if(str != "") {
+          if(size) {
             this->processMessage(size, str);
           }
           return false;
@@ -65,6 +65,9 @@ class BluetoothUploaderDevice: public EventDevice {
     private:
       int at = 0;
       int at_read = 0;
+      int packet_left = 0;
+      char message[1024];
+      int message_size = 0;
       void reset();
       void(*message_listener)(int size, char* str);
       void processMessage(int size, char* str);
