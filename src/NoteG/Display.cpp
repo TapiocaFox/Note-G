@@ -35,14 +35,14 @@ void FillRectFast(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color){
   }
 }
 void InitializeDisplay(){
-  uint32_t when = millis();
+    //uint32_t when = millis();
     //    while (!Serial) ;   //hangs a Leonardo until you connect a Serial
-    if (!Serial) delay(5000);           //allow some time for Leonardo
-    Serial.println("Serial took " + String((millis() - when)) + "ms to start");
+    //if (!Serial) delay(5000);           //allow some time for Leonardo
+    //Serial.println("Serial took " + String((millis() - when)) + "ms to start");
     //    tft.reset();                 //hardware reset
     uint16_t ID = tft.readID(); //
-    Serial.print("ID = 0x");
-    Serial.println(ID, HEX);
+    //Serial.print("ID = 0x");
+    //Serial.println(ID, HEX);
     if (ID == 0xD3D3) ID = 0x9481; // write-only shield
 //    ID = 0x9329;                             // force ID
     tft.begin(ID);

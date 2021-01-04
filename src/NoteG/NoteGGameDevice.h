@@ -2,6 +2,7 @@
 #define NoteGGameDevice_H_
 #include "EventDevice.h"
 #include "BluetoothUploaderDevice.h"
+#include "Display.h"
 
 class NoteGGameDevice: public EventDevice {
   public:
@@ -10,11 +11,15 @@ class NoteGGameDevice: public EventDevice {
 
     void setup() override {
       (*setup_finished_listener)();
+      InitializeDisplay();
     };
 
     bool loop(int latest_valid_loop_millisec_offset) override {
       bool abandon_this_loop = false;
       return abandon_this_loop;
+      //show free memory msg
+  //showmsgXY(290, 0, 1, WHITE, String(freeMemory()).c_str());
+  //Serial.println(freeMemory());
     };
 
     void importSheetMusic(int size, char* str);
