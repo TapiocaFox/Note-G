@@ -269,7 +269,7 @@ function start() {
   function connectBLE() {
     const service = 0xFFE0;
     const characteristic = 0xFFE1;
-    const packet_size = 32;
+    const packet_size = 16;
     let packet_num = 0;
     const ab = create_note_g_binary();
     const total_packet = Math.ceil(ab.length/packet_size);
