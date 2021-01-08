@@ -19,9 +19,22 @@ MCUFRIEND_kbv tft;
 #define YELLOW  0xFFE0
 #define WHITE   0xFFFF
 
-#define BUTTON_1 10
-int buttonState;
-int lastButtonState = LOW; 
+#define BUTTON A5
+#define IDLE_MAX 29
+#define IDLE_min 20
+#define B1_Max 1024
+#define B1_min 1000
+#define B2_Max 520
+#define B2_min 500
+#define B3_Max 220
+#define B3_min 200
+#define B4_Max 89
+#define B4_min 80
+#define B5_Max 12
+#define B5_min 1
+
+int buttonState = 0;
+int lastButtonState;
 unsigned long lastDebounceTime = 0;  // the last time the output pin was toggled
 unsigned long debounceDelay = 50;  
 
@@ -97,7 +110,7 @@ void FillRectFast(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color){
 
 void setup(void) {
     Serial.begin(9600);
-    pinMode(BUTTON_1, INPUT);
+    pinMode(BUTTON, INPUT);
     uint32_t when = millis();
     //    while (!Serial) ;   //hangs a Leonardo until you connect a Serial
     if (!Serial) delay(5000);           //allow some time for Leonardo
@@ -116,7 +129,21 @@ void setup(void) {
 }
 
 void loop(){
-  int reading = digitalRead(BUTTON_1);
+  //int value = analogRead(A5);
+  //Serial.println(value);
+  int value = analogRead(BUTTON);
+
+  int reading;
+  if(value <= IDLE_MAX && value >= IDLE_min) reading = 0;
+  else if(value <= B1_Max && value >= B1_min) reading = 1;
+  else if(value <= B2_Max && value >= B2_min) reading = 2;
+  else if(value <= B3_Max && value >= B3_min) reading = 3;
+  else if(value <= B4_Max && value >= B4_min) reading = 4;
+  else if(value <= B5_Max && value >= B5_min) reading = 5;
+  else reading = 6;
+
+  //Serial.println(reading);
+  
   if (reading != lastButtonState) {
     // reset the debouncing timer
     lastDebounceTime = millis();
@@ -130,8 +157,9 @@ void loop(){
       buttonState = reading;
 
       // only toggle the LED if the new button state is HIGH
-      if (buttonState == HIGH) {
-        Serial.println("pressed!");
+      if (buttonState != 0) {
+        Serial.print("button ");
+        Serial.println(buttonState);
       }
     }
   }
