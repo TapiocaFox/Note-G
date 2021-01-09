@@ -140,7 +140,7 @@ void loop(){
   else if(value <= B3_Max && value >= B3_min) reading = 3;
   else if(value <= B4_Max && value >= B4_min) reading = 4;
   else if(value <= B5_Max && value >= B5_min) reading = 5;
-  else reading = 6;
+  else reading = 666;
 
   //Serial.println(reading);
   

@@ -1,5 +1,5 @@
 #include "NoteGGameDevice.h"
-//#include <cstring>
+#include "Pitch.h"
 
 void NoteGGameDevice::importSheetMusic(int size, char* str) {
   for(int i = 0; i < size; i++) {
@@ -30,6 +30,8 @@ void NoteGGameDevice::buttonInput(uint8_t channel, uint8_t state){
       if (buttonState[channel] != LOW) {
         Serial.print("button ");
         Serial.println(channel);
+        if(channel == 1) startGame();
+        else stopGame();
       }
     }
   }
@@ -39,13 +41,47 @@ void NoteGGameDevice::buttonInput(uint8_t channel, uint8_t state){
 void NoteGGameDevice::startGame(){
   // draw bar need to look ahead
   // first n bar won't be drawn
-  //      A channel is a  time unit long. Each time unit is 420/a     pixel long. Falling speed is (420/a)px/(TimeUnit)ms
+  //      A channel is k  time unit long. Each time unit is 420/k     pixel long. Falling speed is (420/k)px/(TimeUnit)ms
   // e.g. A channel is 35 time unit long. Each time unit is 420/35=12 pixel long. Falling speed is 12px/25ms = 480px/sec
-  playMusic();
+  gameStartTime = millis();
+  startPlayingMusic = true;
+  musicTime = 0;
+  PC = 7+pSheet[6];
+}
+
+void NoteGGameDevice::stopGame(){
+  startPlayingMusic = false;
+  noTone(13);
 }
 
 void NoteGGameDevice::playMusic(){
-  
+  if(!startPlayingMusic) return;
+  if(millis() - gameStartTime > musicTime){
+    if(!rest){
+      tone(13, NOTE[pSheet[PC]]);
+      musicTime += pSheet[PC+1]*pSheet[0];
+      rest = true;
+      Serial.print("note: ");
+      Serial.print(NOTE[pSheet[PC]]);
+      Serial.print(", PC: ");
+      Serial.print(PC);
+      Serial.print(", musicTime: ");
+      Serial.println(musicTime);
+    }
+    else if(rest){
+      tone(13, 0);
+      musicTime += pSheet[PC+2]*pSheet[0];
+      PC += 4;
+      rest = false;
+      Serial.print("note: ");
+      Serial.print(NOTE[pSheet[PC]]);
+      Serial.print(", PC: ");
+      Serial.print(PC);
+      Serial.print(", musicTime: ");
+      Serial.println(musicTime);
+    }
+  }
+  if(PC > sheetSize) stopGame();
 }
 
 void NoteGGameDevice::initGame(){

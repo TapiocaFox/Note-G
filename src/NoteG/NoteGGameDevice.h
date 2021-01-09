@@ -9,6 +9,7 @@ class NoteGGameDevice: public EventDevice {
     NoteGGameDevice() {
     };
     int score = 0;
+    bool startPlayingMusic = false;
     
     void setup() override {
       (*setup_finished_listener)();
@@ -35,6 +36,7 @@ class NoteGGameDevice: public EventDevice {
     // Pause game then resume.
 
     void startGame();
+    void playMusic();
 
     void stopGame();
 
@@ -62,10 +64,13 @@ class NoteGGameDevice: public EventDevice {
     uint8_t BarPool_back[4] = {0,0,0,0};
     int sheetSize;
     char *pSheet;
+    unsigned long gameStartTime;
+    unsigned long musicTime = 0;
+    int PC = 0; // actually is the sheet index counter for playing music. It acts like program counter, adding 4 every srep, so I made it "PC" haha.
+    bool rest = false;
 
     // setup title reset score
     void initGame();
-    void playMusic();
     
 };
 

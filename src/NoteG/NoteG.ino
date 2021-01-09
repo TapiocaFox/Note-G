@@ -4,7 +4,6 @@
 #include "BluetoothUploaderDevice.h"
 #include "SerialDevice.h"
 #include "NoteGGameDevice.h"
-#include "Pitch.h"
 
 #define BUTTON_1 A5
 #define BUTTON_2 12
@@ -88,4 +87,6 @@ void loop() {
   note_g.buttonInput(2, digitalRead(BUTTON_2));
   //note_g.buttonInput(3, digitalRead(BUTTON_3));
   //note_g.buttonInput(4, digitalRead(BUTTON_4));
+
+  note_g.playMusic();
 };
