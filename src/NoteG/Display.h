@@ -21,6 +21,7 @@
 #define MAGENTA 0xF81F
 #define YELLOW  0xFFE0
 #define WHITE   0xFFFF
+#define ORANGE  0xFC00
 
 #ifndef min
 #define min(a, b) (((a) < (b)) ? (a) : (b))
@@ -36,6 +37,7 @@ extern char *__brkval;
 int freeMemory();
 void drawLines();
 void showmsgXY(int x, int y, int sz, int color,const char *msg);
+void showmsgXY(int x, int y, int sz, int color, int bg_color, const char *msg);
 void DrawFallingRect(int lane,int pixel_per_sec);
 void FillRectFast(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
 void InitializeDisplay();

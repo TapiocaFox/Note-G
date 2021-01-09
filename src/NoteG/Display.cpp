@@ -16,11 +16,19 @@ void drawLines(){
   tft.drawFastVLine(80, 60, 420, YELLOW);
   tft.drawFastVLine(160, 60, 420, YELLOW);
   tft.drawFastVLine(240, 60, 420, YELLOW);
+  tft.drawFastHLine(0, 432, 320, ORANGE);
 }
 
 void showmsgXY(int x, int y, int sz, int color,const char *msg){
   tft.setCursor(x, y);
   tft.setTextColor(color);
+  tft.setTextSize(sz);
+  tft.print(msg);
+}
+
+void showmsgXY(int x, int y, int sz, int color, int bg_color, const char *msg){
+  tft.setCursor(x, y);
+  tft.setTextColor(color, bg_color);
   tft.setTextSize(sz);
   tft.print(msg);
 }
@@ -49,5 +57,6 @@ void InitializeDisplay(){
     tft.fillScreen(BLACK);
     tft.setRotation(0);
     drawLines();
-    showmsgXY(10, 10, 3, RED, "Score: ");
+    showmsgXY(10, 5, 2, BLUE, "Unknown Track");
+    showmsgXY(10, 25, 2, RED, "Score: ");
 }
