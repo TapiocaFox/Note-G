@@ -54,7 +54,7 @@ class NoteGGameDevice: public EventDevice {
         uint16_t lastPos = 60;
         uint8_t channel;
         void draw(uint16_t pixel_per_sec);
-        void hit();
+        unsigned long hit(unsigned long offsett);
     };
     
   private:
@@ -79,7 +79,7 @@ class NoteGGameDevice: public EventDevice {
     uint16_t bPC = 0; //PC for bar
     bool rest = false;
     unsigned long lastDrawTime = 0;
-    MCUFRIEND_kbv *TTT;
+    // MCUFRIEND_kbv *TTT;
     // uint8_t channelHeight = 35; //how many time units?
     
 

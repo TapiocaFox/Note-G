@@ -34,12 +34,36 @@ void NoteGGameDevice::buttonInput(uint8_t channel, uint8_t state){
 
       // only toggle the LED if the new button state is HIGH
       if (buttonState[channel] != LOW) {
-        Serial.print("button ");
-        Serial.println(channel);
-        if(channel == 1) startGame();
-        else stopGame();
-        
-        //BarPool[channel-1][BarPool_front[channel-1]]->hit();
+        //Serial.print("button ");
+        //Serial.println(channel);
+        if(channel == 2) startGame();
+        //else stopGame();
+        if( BarPool_size[channel-1] > 0){
+          uint8_t HowGooooodAreYou = BarPool[channel-1][BarPool_front[channel-1]]->hit(pSheet[0]*31);
+          if(HowGooooodAreYou < pSheet[5]){
+            score += 100;
+            //showmsgXY(80*(channel-1)+15, 450, 1, BLACK, BLACK, "almost");
+            //showmsgXY(80*(channel-1)+15, 450, 1, GREEN, BLACK, " GOOD ");
+          }
+          else if(HowGooooodAreYou < pSheet[5]*2){
+            score += 50;
+            //showmsgXY(80*(channel-1)+15, 450, 1, BLACK, BLACK, "almost");
+            //showmsgXY(80*(channel-1)+15, 450, 1, ORANGE, BLACK, "almost");
+          }
+          else{
+            score += 10;
+            //showmsgXY(80*(channel-1)+15, 450, 1, BLACK, BLACK, "almost");
+            //showmsgXY(80*(channel-1)+17, 450, 1, RED, BLACK, " BAD ");
+          }
+          showmsgXY(90, 25, 2, WHITE, BLACK, String(score).c_str());
+          BarPool_size[channel-1] -= 1;
+          for(uint16_t i=BarPool[channel-1][BarPool_front[channel-1]]->lastPos; i < BarPool[channel-1][BarPool_front[channel-1]]->lastPos+10; i++){
+            getTFT()->drawFastHLine(80*(channel-1)+5, i, 70, BLACK);
+          }
+          delete BarPool[channel-1][BarPool_front[channel-1]];
+          BarPool_front[channel-1] = (BarPool_front[channel-1]+1)%10;
+          
+        }
       }
     }
   }
@@ -87,24 +111,13 @@ void NoteGGameDevice::addBar(char instruction){ // use ref?
   {
     channel[i] = ((unsigned char)instruction >> i) & 1;
   }
-  Serial.println();
-  /*
-  if(instruction & 1 !=0) channel[0] = true; else channel[0] = false; // channel[0] = instruction & 128 ? true : false;
-  Serial.println(channel[0]);
-  if(instruction & 2 !=0) channel[1] = true; else channel[1] = false;
-  Serial.println(channel[1]);
-  if(instruction & 4 !=0) channel[2] = true; else channel[2] = false;
-  Serial.println(channel[2]);
-  if(instruction & 8 !=0) channel[3] = true; else channel[3] = false;
-  Serial.println(channel[3]);*/
-  //channel[0] = true;
   for(uint8_t i=0; i<4; i++){
     if(channel[i]){
       BarPool_size[i] += 1;
       if(BarPool_size[i] > 10){
         BarPool_size[i] = 10;
-        for(uint16_t i=BarPool[i][BarPool_front[i]]->lastPos; i < BarPool[i][BarPool_front[i]]->lastPos+10; i++){
-          getTFT()->drawFastHLine(80*i+5, i, 70, BLACK);
+        for(uint16_t j=BarPool[i][BarPool_front[i]]->lastPos; j < BarPool[i][BarPool_front[i]]->lastPos+10; j++){
+          getTFT()->drawFastHLine(80*i+5, j, 70, BLACK);
         }
         delete BarPool[i][BarPool_front[i]];
         BarPool_front[i] = (BarPool_front[i]+1)%10;
@@ -165,10 +178,10 @@ void NoteGGameDevice::initGame(){
   for(uint8_t i=7; i<7+pSheet[6]; i++){
     title += pSheet[i];
   }
-  title += " ";
+  title += "      ";
   //strncpy(title, pSheet+7, (size_t)pSheet[6]);
   showmsgXY(10, 5, 2, BLACK, BLACK, "unknown track");
-  showmsgXY(10, 5, 2, BLUE, BLACK, title.c_str());
+  showmsgXY(10, 5, 2, CYAN, BLACK, title.c_str());
   Serial.print("loaded track - ");
   Serial.println(title);
   //char *score_str;
@@ -194,8 +207,9 @@ void  NoteGGameDevice::Bar::draw(uint16_t pixel_per_sec){
   }
 }
 
-void  NoteGGameDevice::Bar::hit(){
-  
+unsigned long NoteGGameDevice::Bar::hit(unsigned long offsett){
+  unsigned long n = InitTime + offsett - millis();
+  return ((n >> 31) ^ n) - (n >> 31);
 }
 
 NoteGGameDevice::Bar::Bar(uint8_t ch){channel = ch;}
