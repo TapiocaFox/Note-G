@@ -74,6 +74,7 @@ void NoteGGameDevice::lookForBars(){
     Serial.print(" - bPC: ");
     Serial.println(bPC);
   }
+  if(bPC > sheetSize) barTime = 4294967295;
 }
 
 void NoteGGameDevice::addBar(char instruction){ // use ref?
@@ -88,31 +89,33 @@ void NoteGGameDevice::addBar(char instruction){ // use ref?
       Serial.print("in channel ");
       Serial.print(i);
       Serial.println(" should draw a bar");
-      if(BarPool[i][BarPool_back[i]] != NULL){
-        for(uint16_t i=BarPool[i][BarPool_back[i]]->lastPos; i < BarPool[i][BarPool_back[i]]->lastPos+10; i++){
-          getTFT()->drawFastHLine(80*(i-1)+5, i, 70, BLACK);
+      BarPool_size[i] += 1;
+      if(BarPool_size[i] > 10){
+        BarPool_size[i] = 10;
+        for(uint16_t i=BarPool[i][BarPool_front[i]]->lastPos; i < BarPool[i][BarPool_front[i]]->lastPos+10; i++){
+          getTFT()->drawFastHLine(80*i+5, i, 70, BLACK);
         }
-        BarPool_front[i-1] = (BarPool_front[i-1]+1)%10;
-        
-        delete BarPool[i][BarPool_back[i]];
+        delete BarPool[i][BarPool_front[i]];
+        BarPool_front[i] = (BarPool_front[i]+1)%10;
       }
-      BarPool[i][BarPool_back[i]] = new Bar(i+1);
-      BarPool_back[i] = (BarPool_back[i]+1)%10; // 5 is the fixed max amount of bars on a channel. 
-      if(BarPool_back[i] == BarPool_front[i]) BarPool_front[i] = (BarPool_front[i]+1)%10;
-      Serial.print(" front-baack: ");
+      
+      BarPool[i][(BarPool_front[i]+BarPool_size[i]-1)%10] = new Bar(i+1);
+      //if(BarPool_back[i] > BarPool_front[i]) BarPool_front[i] = (BarPool_front[i]+1)%10; // shouldn't happen. just a insurance. but cause mem leak!
+      Serial.print("channel front: ");
       Serial.print(BarPool_front[i]);
-      Serial.print(BarPool_back[i]);
+      Serial.print(", channel size: ");
+      Serial.println(BarPool_size[i]);
     }
   }
 }
 
 void NoteGGameDevice::DrawFallingBar(){
   for(uint8_t i=0; i<4; i++){
-    for(uint8_t j=BarPool_front[i]; j<BarPool_back[i]; j++){
-      BarPool[i][j]->draw(12000/pSheet[0]);
+    for(uint8_t j=0; j<BarPool_size[i]; j++){
+      BarPool[i][(BarPool_front[i]+j)%10]->draw(12000/pSheet[0]);
     }
-    
   }
+  getTFT()->drawFastHLine(0, 432, 320, ORANGE);
 }
 
 void NoteGGameDevice::initBarPC(uint16_t &pc, unsigned long &barTime){
@@ -155,6 +158,8 @@ void NoteGGameDevice::initGame(){
   //strncpy(title, pSheet+7, (size_t)pSheet[6]);
   showmsgXY(10, 5, 2, BLACK, BLACK, "unknown track");
   showmsgXY(10, 5, 2, BLUE, BLACK, title.c_str());
+  Serial.print("loaded track - ");
+  Serial.println(title);
   //char *score_str;
   //sprintf(score_str, "%d", score);
   showmsgXY(90, 25, 2, WHITE, "0");

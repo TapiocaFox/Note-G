@@ -69,7 +69,7 @@ class NoteGGameDevice: public EventDevice {
     unsigned long lastDebounceTime[5] = {0,0,0,0,0};  // the last time the output pin was toggled
     Bar *BarPool[4][10] = {{NULL}};
     uint8_t BarPool_front[4] = {0,0,0,0};
-    uint8_t BarPool_back[4] = {0,0,0,0};
+    uint8_t BarPool_size[4] = {0,0,0,0};
     int sheetSize;
     char *pSheet;
     unsigned long gameStartTime;
@@ -78,6 +78,7 @@ class NoteGGameDevice: public EventDevice {
     uint16_t PC = 0; // actually is the sheet index counter for playing music. It acts like program counter, adding 4 every srep, so I made it "PC" haha.
     uint16_t bPC = 0; //PC for bar
     bool rest = false;
+    unsigned long lastDrawTime = 0;
     // uint8_t channelHeight = 35; //how many time units?
     
 

@@ -60,7 +60,6 @@ void setup() {
   pinMode(BUTTON_2, INPUT);
   //pinMode(BUTTON_3, INPUT);
   //pinMode(BUTTON_4, INPUT);
-  Serial.println(freeMemory());
 }
 
 int bluetooth_uploader_latest_valid_loop_millisec = millis();

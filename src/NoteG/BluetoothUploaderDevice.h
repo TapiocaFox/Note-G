@@ -66,7 +66,7 @@ class BluetoothUploaderDevice: public EventDevice {
       int at = 0;
       int at_read = 0;
       int packet_left = 0;
-      char message[512];
+      char message[300];
       int message_size = 0;
       void reset();
       void(*message_listener)(int size, char* str);
