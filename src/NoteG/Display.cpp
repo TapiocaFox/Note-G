@@ -33,30 +33,24 @@ void showmsgXY(int x, int y, int sz, int color, int bg_color, const char *msg){
   tft.print(msg);
 }
 
-void DrawFallingRect(int lane,int pixel_per_sec){
-  
-}
-
 void FillRectFast(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color){
   for(uint16_t i = 0; i < h; i++){
     tft.drawFastHLine(x, y+i, w, color);
   }
 }
 void InitializeDisplay(){
-    //uint32_t when = millis();
-    //    while (!Serial) ;   //hangs a Leonardo until you connect a Serial
-    //if (!Serial) delay(5000);           //allow some time for Leonardo
-    //Serial.println("Serial took " + String((millis() - when)) + "ms to start");
-    //    tft.reset();                 //hardware reset
-    uint16_t ID = tft.readID(); //
+    uint16_t ID = tft.readID();
     //Serial.print("ID = 0x");
     //Serial.println(ID, HEX);
     if (ID == 0xD3D3) ID = 0x9481; // write-only shield
-//    ID = 0x9329;                             // force ID
     tft.begin(ID);
     tft.fillScreen(BLACK);
     tft.setRotation(0);
     drawLines();
     showmsgXY(10, 5, 2, BLUE, "Unknown Track");
     showmsgXY(10, 25, 2, RED, "Score: ");
+}
+
+MCUFRIEND_kbv* getTFT(){
+  return &tft;
 }

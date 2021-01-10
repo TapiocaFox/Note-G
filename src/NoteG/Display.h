@@ -13,7 +13,7 @@
 
 
 // Assign human-readable names to some common 16-bit color values:
-#define  BLACK   0x0000
+#define BLACK   0x0000
 #define BLUE    0x001F
 #define RED     0xF800
 #define GREEN   0x07E0
@@ -41,5 +41,6 @@ void showmsgXY(int x, int y, int sz, int color, int bg_color, const char *msg);
 void DrawFallingRect(int lane,int pixel_per_sec);
 void FillRectFast(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
 void InitializeDisplay();
+MCUFRIEND_kbv* getTFT();
 
 #endif

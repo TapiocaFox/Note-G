@@ -11,10 +11,7 @@ class NoteGGameDevice: public EventDevice {
     int score = 0;
     bool startPlayingMusic = false;
     
-    void setup() override {
-      (*setup_finished_listener)();
-      InitializeDisplay();
-    };
+    void setup() override;
 
     bool loop(int latest_valid_loop_millisec_offset) override {
       bool abandon_this_loop = false;
@@ -44,12 +41,23 @@ class NoteGGameDevice: public EventDevice {
 
     void resumeGame();
 
-  private:
+    void lookForBars();
+    void DrawFallingBar();
+
     class Bar{
-      unsigned long InitTime;
-      void DrawFallingBar();
+      public:
+        Bar() = default;
+        Bar(uint8_t ch);
+        ~Bar() = default;
+      
+        unsigned long InitTime = 0;
+        uint16_t lastPos = 60;
+        uint8_t channel;
+        void draw(uint16_t pixel_per_sec);
+        void hit();
     };
     
+  private:
     int state = 0;
     // 0 No sheet music data. In menu. Show import alert.
     // 1 Has sheet music data. In menu. Two conditions: 1. Game initially hasn't started yet 2. After game finished. Game became non-started(also showing your score alert dialog).
@@ -59,18 +67,24 @@ class NoteGGameDevice: public EventDevice {
     uint8_t buttonState[5] = {0,0,0,0,0};
     uint8_t lastButtonState[5] = {0,0,0,0,0};
     unsigned long lastDebounceTime[5] = {0,0,0,0,0};  // the last time the output pin was toggled
-    Bar BarPool[4][5];
+    Bar *BarPool[4][10] = {{NULL}};
     uint8_t BarPool_front[4] = {0,0,0,0};
     uint8_t BarPool_back[4] = {0,0,0,0};
     int sheetSize;
     char *pSheet;
     unsigned long gameStartTime;
     unsigned long musicTime = 0;
-    int PC = 0; // actually is the sheet index counter for playing music. It acts like program counter, adding 4 every srep, so I made it "PC" haha.
+    unsigned long barTime = 0;
+    uint16_t PC = 0; // actually is the sheet index counter for playing music. It acts like program counter, adding 4 every srep, so I made it "PC" haha.
+    uint16_t bPC = 0; //PC for bar
     bool rest = false;
+    // uint8_t channelHeight = 35; //how many time units?
+    
 
     // setup title reset score
     void initGame();
+    void initBarPC(uint16_t &pc, unsigned long &barTime);
+    void addBar(char instruction);
     
 };
 

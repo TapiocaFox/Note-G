@@ -60,6 +60,7 @@ void setup() {
   pinMode(BUTTON_2, INPUT);
   //pinMode(BUTTON_3, INPUT);
   //pinMode(BUTTON_4, INPUT);
+  Serial.println(freeMemory());
 }
 
 int bluetooth_uploader_latest_valid_loop_millisec = millis();
@@ -89,4 +90,6 @@ void loop() {
   //note_g.buttonInput(4, digitalRead(BUTTON_4));
 
   note_g.playMusic();
+  note_g.lookForBars();
+  note_g.DrawFallingBar();
 };
