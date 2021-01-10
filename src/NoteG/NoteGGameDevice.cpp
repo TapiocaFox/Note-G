@@ -53,6 +53,7 @@ void NoteGGameDevice::startGame(){
   // e.g. A channel is 35 time unit long. Each time unit is 420/35=12 pixel long. Falling speed is 12px/25ms = 480px/sec
   // 4 time units below the line, 31 above the line. Look ahead 31 time units.
   gameStartTime = millis();
+  lastDrawTime = gameStartTime-1;
   startPlayingMusic = true;
   musicTime = 0;
   PC = 7+pSheet[6];
@@ -79,16 +80,26 @@ void NoteGGameDevice::lookForBars(){
 
 void NoteGGameDevice::addBar(char instruction){ // use ref?
   // add bar to coresponding bar pool
-  bool channel[4] = {true, true, true, true};/*
-  if(instruction & 128 !=0) channel[0] = true;
-  if(instruction & 64 !=0) channel[1] = true;
-  if(instruction & 32 !=0) channel[2] = true;
-  if(instruction & 16 !=0) channel[3] = true;*/
-  for(uint8_t i=0; i<1; i++){ // temp resitrict to 111111111111111111111111111
+  bool channel[4] = {false, false, false, false};
+  Serial.print("instruction: ");
+  Serial.println((int)instruction);
+  for(uint8_t i = 0; i < 4; i++)
+  {
+    channel[i] = ((unsigned char)instruction >> i) & 1;
+  }
+  Serial.println();
+  /*
+  if(instruction & 1 !=0) channel[0] = true; else channel[0] = false; // channel[0] = instruction & 128 ? true : false;
+  Serial.println(channel[0]);
+  if(instruction & 2 !=0) channel[1] = true; else channel[1] = false;
+  Serial.println(channel[1]);
+  if(instruction & 4 !=0) channel[2] = true; else channel[2] = false;
+  Serial.println(channel[2]);
+  if(instruction & 8 !=0) channel[3] = true; else channel[3] = false;
+  Serial.println(channel[3]);*/
+  //channel[0] = true;
+  for(uint8_t i=0; i<4; i++){
     if(channel[i]){
-      Serial.print("in channel ");
-      Serial.print(i);
-      Serial.println(" should draw a bar");
       BarPool_size[i] += 1;
       if(BarPool_size[i] > 10){
         BarPool_size[i] = 10;
@@ -101,21 +112,20 @@ void NoteGGameDevice::addBar(char instruction){ // use ref?
       
       BarPool[i][(BarPool_front[i]+BarPool_size[i]-1)%10] = new Bar(i+1);
       //if(BarPool_back[i] > BarPool_front[i]) BarPool_front[i] = (BarPool_front[i]+1)%10; // shouldn't happen. just a insurance. but cause mem leak!
-      Serial.print("channel front: ");
-      Serial.print(BarPool_front[i]);
-      Serial.print(", channel size: ");
-      Serial.println(BarPool_size[i]);
     }
   }
 }
 
 void NoteGGameDevice::DrawFallingBar(){
+  //if(millis() - lastDrawTime < 33) return;
+  if(!startPlayingMusic) return;
   for(uint8_t i=0; i<4; i++){
     for(uint8_t j=0; j<BarPool_size[i]; j++){
       BarPool[i][(BarPool_front[i]+j)%10]->draw(12000/pSheet[0]);
     }
   }
   getTFT()->drawFastHLine(0, 432, 320, ORANGE);
+  //lastDrawTime = millis();
 }
 
 void NoteGGameDevice::initBarPC(uint16_t &pc, unsigned long &barTime){
@@ -155,6 +165,7 @@ void NoteGGameDevice::initGame(){
   for(uint8_t i=7; i<7+pSheet[6]; i++){
     title += pSheet[i];
   }
+  title += " ";
   //strncpy(title, pSheet+7, (size_t)pSheet[6]);
   showmsgXY(10, 5, 2, BLACK, BLACK, "unknown track");
   showmsgXY(10, 5, 2, BLUE, BLACK, title.c_str());

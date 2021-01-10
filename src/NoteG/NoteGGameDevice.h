@@ -79,6 +79,7 @@ class NoteGGameDevice: public EventDevice {
     uint16_t bPC = 0; //PC for bar
     bool rest = false;
     unsigned long lastDrawTime = 0;
+    MCUFRIEND_kbv *TTT;
     // uint8_t channelHeight = 35; //how many time units?
     
 
