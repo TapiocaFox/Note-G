@@ -92,6 +92,13 @@ void NoteGGameDevice::startGame(){
 void NoteGGameDevice::stopGame(){
   startPlayingMusic = false;
   noTone(13);
+  for(uint8_t i=0; i<4; i++){
+    for(uint8_t j=0; j<BarPool_size[i]; j++){
+      delete BarPool[i][(BarPool_front[i]+j)%10];
+    }
+    BarPool_size[i] = 0;
+    BarPool_front[i] = 0;
+  }
 }
 
 void NoteGGameDevice::lookForBars(){
