@@ -179,6 +179,7 @@ void NoteGGameDevice::playMusic(){
       rest = false;
     }
   }
+  if(PC > sheetSize) stopGame();/*
   if(PC > sheetSize && !aboutToEnd){
     lastDrawTime = millis();
     aboutToEnd = true;
@@ -186,7 +187,7 @@ void NoteGGameDevice::playMusic(){
   if(aboutToEnd && millis() - lastDrawTime > 1000) {
     stopGame();
     aboutToEnd = false;
-  }
+  }*/
 }
 
 void NoteGGameDevice::initGame(){
