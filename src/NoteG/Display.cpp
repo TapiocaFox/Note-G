@@ -16,7 +16,7 @@ void drawLines(){
   tft.drawFastVLine(80, 60, 420, YELLOW);
   tft.drawFastVLine(160, 60, 420, YELLOW);
   tft.drawFastVLine(240, 60, 420, YELLOW);
-  tft.drawFastHLine(0, 432, 320, ORANGE);
+  tft.drawFastHLine(0, 437, 320, ORANGE);
 }
 
 void showmsgXY(int x, int y, int sz, int color,const char *msg){

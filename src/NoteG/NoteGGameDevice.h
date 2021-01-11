@@ -71,7 +71,7 @@ class NoteGGameDevice: public EventDevice {
     uint8_t BarPool_front[4] = {0,0,0,0};
     uint8_t BarPool_size[4] = {0,0,0,0};
     int sheetSize;
-    char *pSheet;
+    char *pSheet = NULL;
     unsigned long gameStartTime;
     unsigned long musicTime = 0;
     unsigned long barTime = 0;
