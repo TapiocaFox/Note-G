@@ -141,7 +141,7 @@ void NoteGGameDevice::DrawFallingBar(){
     }
   }
   getTFT()->drawFastHLine(0, 437, 320, ORANGE);
-  lastDrawTime = millis();
+  
 }
 
 void NoteGGameDevice::initBarPC(uint16_t &pc, unsigned long &barTime){
@@ -172,7 +172,14 @@ void NoteGGameDevice::playMusic(){
       rest = false;
     }
   }
-  if(PC > sheetSize) stopGame();
+  if(PC > sheetSize && !aboutToEnd){
+    lastDrawTime = millis();
+    aboutToEnd = true;
+  }
+  if(aboutToEnd && millis() - lastDrawTime > 1000) {
+    stopGame();
+    aboutToEnd = false;
+  }
 }
 
 void NoteGGameDevice::initGame(){

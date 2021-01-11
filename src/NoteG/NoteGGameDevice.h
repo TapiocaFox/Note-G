@@ -81,6 +81,7 @@ class NoteGGameDevice: public EventDevice {
     unsigned long lastDrawTime = 0;
     // MCUFRIEND_kbv *TTT;
     // uint8_t channelHeight = 35; //how many time units?
+    bool aboutToEnd = false;
     
 
     // setup title reset score
