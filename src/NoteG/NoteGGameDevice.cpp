@@ -39,14 +39,14 @@ void NoteGGameDevice::buttonInput(uint8_t channel, uint8_t state){
         if(channel == 2 && !startPlayingMusic) startGame();
         //else stopGame();
         if( BarPool_size[channel-1] > 0){
-          uint8_t HowGooooodAreYou = BarPool[channel-1][BarPool_front[channel-1]]->hit(pSheet[0]*31);
-          if(HowGooooodAreYou < pSheet[5]*2){
+          unsigned long HowGooooodAreYou = BarPool[channel-1][BarPool_front[channel-1]]->hit(pSheet[0]*31);
+          if(HowGooooodAreYou < pSheet[5]){
             score += 100;
             showmsgXY(80*(channel-1)+10, 450, 2, BLACK, "soso");
             showmsgXY(80*(channel-1)+14, 450, 2, BLACK, "BAD");
             showmsgXY(80*(channel-1)+12, 450, 2, GREEN, BLACK, "GOOD");
           }
-          else if(HowGooooodAreYou < pSheet[5]*4){
+          else if(HowGooooodAreYou < pSheet[5]*2){
             score += 50;
             showmsgXY(80*(channel-1)+12, 450, 2, BLACK, "GOOD");
             showmsgXY(80*(channel-1)+14, 450, 2, BLACK, "BAD");
@@ -134,7 +134,7 @@ void NoteGGameDevice::addBar(char instruction){ // use ref?
 
 void NoteGGameDevice::DrawFallingBar(){
   //if(millis() - lastDrawTime < 33) return;
-  if(!startPlayingMusic && millis() - lastDrawTime > 1000) return;
+  if(!startPlayingMusic) return;
   for(uint8_t i=0; i<4; i++){
     for(uint8_t j=0; j<BarPool_size[i]; j++){
       BarPool[i][(BarPool_front[i]+j)%10]->draw(12000/pSheet[0]);
@@ -211,7 +211,7 @@ void  NoteGGameDevice::Bar::draw(uint16_t pixel_per_sec){
 }
 
 unsigned long NoteGGameDevice::Bar::hit(unsigned long offsett){
-  unsigned long n = InitTime + offsett - millis();
+  long n = InitTime + offsett - millis();
   return ((n >> 31) ^ n) - (n >> 31);
 }
 
