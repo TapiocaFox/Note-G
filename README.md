@@ -19,3 +19,8 @@ A portable music game console made with Arduino UNO. You can edit your music she
 * Lots of cables
 
 A simple [document](https://docs.google.com/presentation/d/146XQ0_US55G4nBLCPsQQ8guDu7obMFU0QmIVaeavj1w/edit?usp=sharing) for your reference. Implentation details and architecture included.
+
+## ToDo
+* Game becomes unplayable when it starts again because of wrong bPC reset(byte reading index counter for bars).
+* The bar of the first note is missing.
+* Bars won't disappear even they go over the line, only when buffer is full, causing player still hitting over-line bars instead of upcoming bars.
