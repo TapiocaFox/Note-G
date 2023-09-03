@@ -1,6 +1,8 @@
 # Note-G
 A portable music game console made with Arduino UNO. You can edit your music sheet on web and upload it to Arduino through bluetooth. Open Music XML is supported.
 
+![](/imgs/Note-G%20Editor.PNG)
+
 ## How to use it
 1. Open Web editor in src/browder/index.html
 2. Build Note-G.ino to your Arduino board.
