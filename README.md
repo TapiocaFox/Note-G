@@ -22,6 +22,8 @@ A portable music game console made with Arduino UNO. You can edit your music she
 
 A simple [document](https://docs.google.com/presentation/d/146XQ0_US55G4nBLCPsQQ8guDu7obMFU0QmIVaeavj1w/edit?usp=sharing) for your reference. Implentation details and architecture included.
 
+![](/imgs/arduino.jpg)
+
 ## ToDo
 * Game becomes unplayable when it starts again because of wrong bPC reset(byte reading index counter for bars).
 * The bar of the first note is missing.
