@@ -70,7 +70,7 @@
   <div id="sections-container">
     <div id="editor-section">
       <h1>Note-G editor</h1>
-      <p>Edit your sheet here. You can edit per note unit.</p>
+      <p style="max-width: 700px;">Upload the sheet to Arduino via bluetooth BLE. The editor supports the importation from the Open Music XML format. Please use Google Chrome for the best compatibility. Checkout <a href="https://github.com/TapiocaFox/Note-G" target="_blank">GitHub</a>.</p>
       <h3>Title</h3>
       <input type="text" id="title" name="title" value="Untitled">
       <h3>Time unit</h3>
@@ -99,15 +99,15 @@
     <div id="action-section">
       <div id="game-animation"></div>
       <div id="actions">
-        <h1>Actions & Player</h1>
-        <p>Your global actions are here. Left hand side is your 35 time units game player.</p>
+        <h1>Actions & Emulator</h1>
+        <p>On your left hand side is a 35 time units game player.</p>
         <p>
           <button id="play-button">Play</button>
           <button id="play-slower-button">Play slower</button>
           <button id="stop-button">Stop</button>
         </p>
         <p>
-          <button id="upload-button">Upload</button>
+          <button id="upload-button">Upload BLE</button>
           <button id="export-button">Export</button>
           <button id="import-button">Import</button>
           <button id="clear-button">Clear</button>
