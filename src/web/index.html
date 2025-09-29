@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Note G Editor</title>
+  <style>
+  body {
+    margin: 0;
+    font-family: arial, sans-serif;
+  }
+  #sections-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  #action-section {
+    padding: 10px 20px;
+    min-height: 200px;
+    border-top: 1px solid black;
+  }
+  #editor-section {
+    padding: 10px 30px;
+    flex: 1;
+    overflow: auto;
+    background-color: #f0f0f0;
+  }
+  #game-animation {
+    display: inline-block;
+
+    float: left;
+    width: 150px;
+    height: 200px;
+    position: relative;
+    background: black;
+    border-radius: 5px;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+  }
+  #actions {
+    margin-left: 20px;
+    float: left;
+    display: inline-block;
+  }
+  #sheet-table {
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+  }
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+  input, button, select {
+    background: white;
+    border-style: solid;
+    border-width:1px;
+    border-radius: 4px;
+    min-height: 15px;
+    font-size: 15px;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2)
+  }
+  tr:nth-child(even) {
+    background-color: #f0f0f0;
+  }
+  </style>
+<head/>
+<body>
+  <div id="sections-container">
+    <div id="editor-section">
+      <h1>Note-G editor</h1>
+      <p>Edit your sheet here. You can edit per note unit.</p>
+      <h3>Title</h3>
+      <input type="text" id="title" name="title" value="Untitled">
+      <h3>Time unit</h3>
+      <p><input type="number" id="time-unit" name="time-unit" min="1" max="256" value="25"> milliseconds.</p>
+      <h3>Timing window radius</h3>
+      <p> <input type="number" id="timing-window" name="timing-window" min="1" max="256" value="25"> milliseconds.</p>
+      <h3>Note unit sheet</h3>
+      <table id="sheet-table">
+        <tr>
+          <th>Note</th>
+          <th>Tone duration</th>
+          <th>Rest duration</th>
+          <th>Button instruction (Z/X/C/V)</th>
+          <th>Play k notes</th>
+          <th>Actions</th>
+        </tr>
+        <!-- <tr>
+          <th>Note</th>
+          <th>Tone duration</th>
+          <th>Rest duration</th>
+          <th>Button instruction</th>
+          <th>Play next k notes</th>
+        </tr> -->
+      </table>
+    </div>
+    <div id="action-section">
+      <div id="game-animation"></div>
+      <div id="actions">
+        <h1>Actions & Player</h1>
+        <p>Your global actions are here. Left hand side is your 35 time units game player.</p>
+        <p>
+          <button id="play-button">Play</button>
+          <button id="play-slower-button">Play slower</button>
+          <button id="stop-button">Stop</button>
+        </p>
+        <p>
+          <button id="upload-button">Upload</button>
+          <button id="export-button">Export</button>
+          <button id="import-button">Import</button>
+          <button id="clear-button">Clear</button>
+          <input style="display:none" type="file" id="import-file"/>
+        </p>
+        <!-- <p>copyright©2020 noowyee.</p> -->
+      </div>
+
+    </div>
+  </div>
+  <script src="./SimpleDOMAnimationFramework.js"></script>
+  <script src="./NoteUnitRow.js"></script>
+  <script src="./Notes.js"></script>
+  <script src="./editor.js"></script>
+</body>
+</html>
